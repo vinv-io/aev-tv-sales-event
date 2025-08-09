@@ -1,0 +1,100 @@
+{
+  "common": {
+    "welcome": "Welcome to AQUA VN",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "back": "Back",
+    "next": "Next",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "total": "Total",
+    "quantity": "Quantity"
+  },
+  "navigation": {
+    "home": "Home",
+    "order": "Order",
+    "leaderboard": "Leaderboard",
+    "leaderboard2": "Leaderboard 2",
+    "admin": "Admin",
+    "products": "Products",
+    "customers": "Customers",
+    "events": "Events",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "checkin": {
+    "title": "Welcome to AQUA VN",
+    "description": "Enter your details to start your order.",
+    "eventLabel": "Select Event",
+    "eventPlaceholder": "Choose an event",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "Enter your phone number",
+    "phoneTitle": "Phone number must be 10 digits",
+    "shopLabel": "Shop Name",
+    "shopPlaceholder": "Enter your shop name",
+    "buttonText": "Proceed to Order",
+    "requiredField": "Please fill out this field.",
+    "errorTitle": "Validation Error",
+    "errorEvent": "Please select an event.",
+    "errorPhone": "Please enter a valid phone number.",
+    "errorShopName": "Please enter your shop name.",
+    "checkinSuccess": "Check-in successful!",
+    "checkinError": "Check-in Error",
+    "checkinErrorDesc": "There was an error checking in. Please try again."
+  },
+  "order": {
+    "title": "Available Products",
+    "orderSummary": "Order Summary",
+    "total": "Total Quantity",
+    "emptyCart": "Your cart is empty.",
+    "checkout": "Checkout",
+    "addToOrder": "Add to Order",
+    "searchPlaceholder": "Search products...",
+    "shopName": "Shop Name",
+    "phone": "Phone Number",
+    "authRequired": "Authentication Required",
+    "authRequiredDesc": "You need to check in to place an order.",
+    "goToLogin": "Go to Check-in"
+  },
+  "products": {
+    "name": "Product Name",
+    "description": "Description",
+    "image": "Image",
+    "price": "Price",
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock",
+    "inStock": "In Stock"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "review": "Review Your Order",
+    "placeOrder": "Place Order",
+    "orderPlaced": "Order Placed Successfully",
+    "thankYou": "Thank you for your order!"
+  },
+  "validation": {
+    "errorTitle": "Validation Error",
+    "phoneRequired": "Phone number is required.",
+    "phoneInvalid": "Please enter a valid 10-digit phone number.",
+    "shopNameRequired": "Shop name is required.",
+    "eventRequired": "Please select an event."
+  },
+  "admin": {
+    "dashboard": "Dashboard",
+    "login": "Admin Login",
+    "loginDescription": "Enter your credentials to access the dashboard",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign In",
+    "logout": "Logout",
+    "overview": "Overview",
+    "analytics": "Analytics",
+    "management": "Management"
+  }
+}

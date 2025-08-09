@@ -1,0 +1,89 @@
+{
+  "navigation": {
+    "home": "Home",
+    "order": "Order",
+    "leaderboard": "Leaderboard",
+    "leaderboard2": "Leaderboard 2",
+    "admin": "Admin"
+  },
+  "footer": {
+    "quickLinks": "Quick Links",
+    "contact": "Contact Us",
+    "leaderboard": "Leaderboard",
+    "leaderboard2": "Leaderboard 2", 
+    "order": "Order",
+    "admin": "Admin",
+    "tagline": "Inspiring life sources",
+    "allRightsReserved": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "tryAgain": "Try again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "search": "Search",
+    "select": "Select",
+    "required": "Required"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Cart is empty",
+    "quantity": "Quantity",
+    "total": "Total",
+    "checkout": "Checkout",
+    "addToCart": "Add to Cart",
+    "removeFromCart": "Remove from Cart"
+  },
+  "customer": {
+    "phone": "Phone Number",
+    "shopName": "Shop Name",
+    "event": "Event",
+    "signOut": "Sign Out",
+    "profile": "Profile"
+  },
+  "validation": {
+    "phoneRequired": "Phone number is required",
+    "phoneInvalid": "Invalid phone number",
+    "shopNameRequired": "Shop name is required",
+    "eventRequired": "Event is required"
+  },
+  "checkin": {
+    "title": "Event Check-In",
+    "description": "Please enter your details to participate in the event"
+  },
+  "placeholders": {
+    "shopName": "Enter your shop name",
+    "event": "Select an event"
+  },
+  "events": {
+    "tv-promotion-2024": "TV Promotion 2024",
+    "summer-sale": "Summer Sale",
+    "back-to-school": "Back to School"
+  },
+  "success": {
+    "checkIn": "Check-in successful!",
+    "welcome": "Welcome to the event!",
+    "alreadyCheckedIn": "Already Checked In"
+  },
+  "error": {
+    "checkIn": "Check-in failed",
+    "submission": "Submission Error"
+  },
+  "actions": {
+    "checkIn": "Check In",
+    "checkInDifferent": "Check in with different details"
+  },
+  "metadata": {
+    "home": {
+      "title": "AEV TV Sales Promo - Home",
+      "description": "Welcome to AEV TV Sales Promotion platform"
+    }
+  }
+}

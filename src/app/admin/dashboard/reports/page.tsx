@@ -1,0 +1,314 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getEvents, getCheckIns, getOrders, getCustomers } from '@/lib/data/actions';
+import type { Event, CheckIn, Order, Customer } from '@/lib/data/types';
+
+
+const ITEMS_PER_PAGE = 20;
+
+export default function ReportsPage() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState('');
+  const [checkInCurrentPage, setCheckInCurrentPage] = useState(1);
+  const [ordersCurrentPage, setOrdersCurrentPage] = useState(1);
+
+  // Define orders per page (complete orders, not rows)
+  const ORDERS_PER_PAGE = 10;
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+        const [allEvents, allCustomers, checkinData, orderData] = await Promise.all([
+            getEvents() as Promise<Event[]>,
+            getCustomers() as Promise<Customer[]>,
+            getCheckIns() as Promise<CheckIn[]>,
+            getOrders() as Promise<Order[]>
+        ]);
+        
+        const sortedEvents = [...allEvents].sort((a,b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+
+        setEvents(allEvents);
+        setCustomers(allCustomers);
+        setCheckIns(checkinData);
+        setOrders(orderData);
+
+        if (sortedEvents.length > 0) {
+            setSelectedEvent(sortedEvents[0].id);
+        }
+    }
+    fetchInitialData();
+  }, []);
+
+  const filteredCheckins = checkIns.filter(c => c.eventId === selectedEvent);
+  const filteredOrders = orders.filter(o => o.eventId === selectedEvent);
+
+  const totalCheckInPages = Math.ceil(filteredCheckins.length / ITEMS_PER_PAGE);
+  const paginatedCheckins = filteredCheckins.slice(
+    (checkInCurrentPage - 1) * ITEMS_PER_PAGE,
+    checkInCurrentPage * ITEMS_PER_PAGE
+  );
+
+  const handleEventChange = (eventId: string) => {
+    setSelectedEvent(eventId);
+    setCheckInCurrentPage(1);
+    setOrdersCurrentPage(1);
+  }
+
+  const shopPhoneMap = new Map<string, string>();
+    customers.forEach(customer => {
+        if (!shopPhoneMap.has(customer.shopName)) {
+            shopPhoneMap.set(customer.shopName, customer.phone);
+        }
+    });
+
+  // Pagination for orders: paginate by complete orders, not individual rows
+  const totalOrdersPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
+  const paginatedFilteredOrders = filteredOrders.slice(
+    (ordersCurrentPage - 1) * ORDERS_PER_PAGE,
+    ordersCurrentPage * ORDERS_PER_PAGE
+  );
+
+  // Flatten only the paginated orders for display
+  const flattenedOrdersForDisplay = paginatedFilteredOrders.flatMap(order => {
+    const totalQuantity = order.products.reduce((sum, p) => sum + p.quantity, 0);
+    return order.products.map((product, index) => ({
+      orderId: order.orderId,
+      shopName: order.shopName,
+      phone: shopPhoneMap.get(order.shopName) || 'N/A',
+      productId: product.id,
+      quantity: product.quantity,
+      totalQuantity: totalQuantity,
+      orderDate: order.orderDate,
+      isFirstProduct: index === 0, // Flag to show order info only on first product
+      totalProducts: order.products.length, // For rowspan
+    }));
+  });
+
+  const handleExport = () => {
+    const event = events.find(e => e.id === selectedEvent);
+    const eventName = event ? (typeof event.name === 'string' ? event.name : event.name.en) : 'report';
+    
+    // Create worksheets
+    const checkinWsData = filteredCheckins.map(c => ({
+        "Customer ID": c.customerId,
+        "Shop Name": c.shopName,
+        "Phone": c.phone,
+        "Event ID": c.eventId,
+        "Check-in Time": c.checkInTime
+    }));
+    const checkinWs = XLSX.utils.json_to_sheet(checkinWsData);
+    
+    const flattenedOrders = filteredOrders.flatMap(order => 
+        order.products.map(product => ({
+            'Order ID': order.orderId,
+            'Shop Name': order.shopName,
+            'Phone Number': shopPhoneMap.get(order.shopName) || '',
+            'Product ID': product.id,
+            'Quantity': product.quantity,
+            'Order Date': order.orderDate,
+        }))
+    );
+    const orderWs = XLSX.utils.json_to_sheet(flattenedOrders);
+
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+
+    // Append worksheets to the workbook
+    XLSX.utils.book_append_sheet(wb, checkinWs, "Check-ins");
+    XLSX.utils.book_append_sheet(wb, orderWs, "Sale Orders");
+
+    // Write the workbook and trigger a download
+    XLSX.writeFile(wb, `${eventName.replace(/ /g, '_')}_report.xlsx`);
+  };
+
+  const sortedEventsForDropdown = [...events].sort((a,b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+
+  return (
+    <div className="space-y-6">
+        <div className="flex items-center justify-between">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight">Generate Reports</h1>
+            </div>
+            <div className="flex items-center gap-4">
+                <Select value={selectedEvent} onValueChange={handleEventChange}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select Event" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {sortedEventsForDropdown.map(event => {
+                            const eventName = typeof event.name === 'string' ? event.name : event.name.en;
+                            return (<SelectItem key={event.id} value={event.id}>{eventName}</SelectItem>)
+                        })}
+                    </SelectContent>
+                </Select>
+                <Button onClick={handleExport} disabled={filteredCheckins.length === 0 && flattenedOrdersForDisplay.length === 0}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Export
+                </Button>
+            </div>
+        </div>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Check-in Report</CardTitle>
+                <CardDescription>Shop check-in data for the selected event.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Customer ID</TableHead>
+                            <TableHead>Shop Name</TableHead>
+                            <TableHead>Phone</TableHead>
+                            <TableHead>Event ID</TableHead>
+                            <TableHead>Check-in Time</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {paginatedCheckins.length > 0 ? paginatedCheckins.map((checkin, index) => (
+                            <TableRow key={`${checkin.customerId}-${checkin.eventId}-${index}`}>
+                                <TableCell>{checkin.customerId}</TableCell>
+                                <TableCell>{checkin.shopName}</TableCell>
+                                <TableCell>{checkin.phone}</TableCell>
+                                <TableCell>{checkin.eventId}</TableCell>
+                                <TableCell>{checkin.checkInTime}</TableCell>
+                            </TableRow>
+                        )) : (
+                            <TableRow>
+                                <TableCell colSpan={5} className="text-center h-24">No check-ins for this event.</TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </CardContent>
+            {totalCheckInPages > 1 && (
+                <CardFooter className="flex justify-center items-center space-x-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCheckInCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={checkInCurrentPage === 1}
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                        Previous
+                    </Button>
+                    <span>
+                        Page {checkInCurrentPage} of {totalCheckInPages}
+                    </span>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCheckInCurrentPage((prev) => Math.min(prev + 1, totalCheckInPages))}
+                        disabled={checkInCurrentPage === totalCheckInPages}
+                    >
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                    </Button>
+                </CardFooter>
+            )}
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Sale Orders Report</CardTitle>
+                <CardDescription>Detailed sales data for the selected event.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Order ID</TableHead>
+                            <TableHead>Shop Name</TableHead>
+                            <TableHead>Phone Number</TableHead>
+                            <TableHead>Product ID</TableHead>
+                            <TableHead>Product Quantity</TableHead>
+                            <TableHead>Total Quantity</TableHead>
+                            <TableHead>Order Date</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {flattenedOrdersForDisplay.length > 0 ? flattenedOrdersForDisplay.map((orderItem, index) => (
+                           <TableRow key={`${orderItem.orderId}-${orderItem.productId}-${index}`}>
+                               {orderItem.isFirstProduct ? (
+                                   <>
+                                       <TableCell rowSpan={orderItem.totalProducts}>{orderItem.orderId}</TableCell>
+                                       <TableCell rowSpan={orderItem.totalProducts}>{orderItem.shopName}</TableCell>
+                                       <TableCell rowSpan={orderItem.totalProducts}>{orderItem.phone}</TableCell>
+                                   </>
+                               ) : null}
+                               <TableCell>{orderItem.productId}</TableCell>
+                               <TableCell>{orderItem.quantity}</TableCell>
+                               {orderItem.isFirstProduct ? (
+                                   <>
+                                       <TableCell rowSpan={orderItem.totalProducts}>{orderItem.totalQuantity}</TableCell>
+                                       <TableCell rowSpan={orderItem.totalProducts}>{orderItem.orderDate}</TableCell>
+                                   </>
+                               ) : null}
+                           </TableRow>
+                        )) : (
+                            <TableRow>
+                                <TableCell colSpan={7} className="text-center h-24">No sale orders for this event.</TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </CardContent>
+             {totalOrdersPages > 1 && (
+                <CardFooter className="flex justify-center items-center space-x-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setOrdersCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={ordersCurrentPage === 1}
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                        Previous
+                    </Button>
+                    <span>
+                        Page {ordersCurrentPage} of {totalOrdersPages} ({filteredOrders.length} orders total, showing {paginatedFilteredOrders.length})
+                    </span>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setOrdersCurrentPage((prev) => Math.min(prev + 1, totalOrdersPages))}
+                        disabled={ordersCurrentPage === totalOrdersPages}
+                    >
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                    </Button>
+                </CardFooter>
+            )}
+        </Card>
+    </div>
+  );
+}

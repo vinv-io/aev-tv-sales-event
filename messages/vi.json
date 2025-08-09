@@ -1,0 +1,89 @@
+{
+  "navigation": {
+    "home": "Trang chủ",
+    "order": "Đặt hàng",
+    "leaderboard": "Bảng xếp hạng",
+    "leaderboard2": "Bảng xếp hạng 2",
+    "admin": "Quản trị"
+  },
+  "footer": {
+    "quickLinks": "Liên kết nhanh",
+    "contact": "Liên hệ",
+    "leaderboard": "Bảng xếp hạng",
+    "leaderboard2": "Bảng xếp hạng 2",
+    "order": "Đặt hàng",
+    "admin": "Quản trị",
+    "tagline": "Khơi nguồn cảm hứng sống",
+    "allRightsReserved": "Tất cả quyền được bảo lưu.",
+    "privacy": "Chính sách bảo mật",
+    "terms": "Điều khoản dịch vụ"
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Có lỗi xảy ra",
+    "tryAgain": "Thử lại",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "submit": "Gửi",
+    "next": "Tiếp theo",
+    "previous": "Trước",
+    "close": "Đóng",
+    "search": "Tìm kiếm",
+    "select": "Chọn",
+    "required": "Bắt buộc"
+  },
+  "cart": {
+    "title": "Giỏ hàng",
+    "empty": "Giỏ hàng trống",
+    "quantity": "Số lượng",
+    "total": "Tổng cộng",
+    "checkout": "Thanh toán",
+    "addToCart": "Thêm vào giỏ",
+    "removeFromCart": "Xóa khỏi giỏ"
+  },
+  "customer": {
+    "phone": "Số điện thoại",
+    "shopName": "Tên cửa hàng",
+    "event": "Sự kiện",
+    "signOut": "Đăng xuất",
+    "profile": "Hồ sơ"
+  },
+  "validation": {
+    "phoneRequired": "Số điện thoại là bắt buộc",
+    "phoneInvalid": "Số điện thoại không hợp lệ",
+    "shopNameRequired": "Tên cửa hàng là bắt buộc",
+    "eventRequired": "Sự kiện là bắt buộc"
+  },
+  "checkin": {
+    "title": "Đăng ký tham gia",
+    "description": "Vui lòng nhập thông tin của bạn để tham gia sự kiện"
+  },
+  "placeholders": {
+    "shopName": "Nhập tên cửa hàng của bạn",
+    "event": "Chọn một sự kiện"
+  },
+  "events": {
+    "tv-promotion-2024": "Khuyến mãi TV 2024",
+    "summer-sale": "Giảm giá mùa hè",
+    "back-to-school": "Trở lại trường học"
+  },
+  "success": {
+    "checkIn": "Đăng ký thành công!",
+    "welcome": "Chào mừng đến với sự kiện!",
+    "alreadyCheckedIn": "Đã đăng ký"
+  },
+  "error": {
+    "checkIn": "Đăng ký thất bại",
+    "submission": "Lỗi gửi dữ liệu"
+  },
+  "actions": {
+    "checkIn": "Đăng ký",
+    "checkInDifferent": "Đăng ký với thông tin khác"
+  },
+  "metadata": {
+    "home": {
+      "title": "AEV TV Sales Promo - Trang chủ",
+      "description": "Chào mừng đến với nền tảng khuyến mãi AEV TV Sales"
+    }
+  }
+}

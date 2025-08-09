@@ -1,0 +1,100 @@
+{
+  "common": {
+    "welcome": "Chào mừng đến với AQUA VN",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "cancel": "Hủy bỏ",
+    "confirm": "Xác nhận",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "add": "Thêm",
+    "search": "Tìm kiếm",
+    "total": "Tổng",
+    "quantity": "Số lượng"
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "order": "Đặt hàng",
+    "leaderboard": "Bảng xếp hạng",
+    "leaderboard2": "Bảng xếp hạng 2",
+    "admin": "Quản trị",
+    "products": "Sản phẩm",
+    "customers": "Khách hàng",
+    "events": "Sự kiện",
+    "reports": "Báo cáo",
+    "settings": "Cài đặt"
+  },
+  "checkin": {
+    "title": "Chào mừng đến với AQUA VN",
+    "description": "Nhập thông tin của bạn để bắt đầu đặt hàng.",
+    "eventLabel": "Chọn sự kiện",
+    "eventPlaceholder": "Chọn một sự kiện",
+    "phoneLabel": "Số điện thoại",
+    "phonePlaceholder": "Nhập số điện thoại của bạn",
+    "phoneTitle": "Số điện thoại phải có 10 chữ số",
+    "shopLabel": "Tên cửa hàng",
+    "shopPlaceholder": "Nhập tên cửa hàng của bạn",
+    "buttonText": "Tiếp tục đặt hàng",
+    "requiredField": "Vui lòng điền vào trường này.",
+    "errorTitle": "Lỗi xác thực",
+    "errorEvent": "Vui lòng chọn một sự kiện.",
+    "errorPhone": "Vui lòng nhập một số điện thoại hợp lệ.",
+    "errorShopName": "Vui lòng nhập tên cửa hàng của bạn.",
+    "checkinSuccess": "Check-in thành công!",
+    "checkinError": "Lỗi Check-in",
+    "checkinErrorDesc": "Đã xảy ra lỗi khi check-in. Vui lòng thử lại."
+  },
+  "order": {
+    "title": "Sản phẩm có sẵn",
+    "orderSummary": "Tóm tắt đơn hàng",
+    "total": "Tổng số lượng",
+    "emptyCart": "Giỏ hàng của bạn đang trống.",
+    "checkout": "Thanh toán",
+    "addToOrder": "Thêm vào giỏ",
+    "searchPlaceholder": "Tìm kiếm sản phẩm...",
+    "shopName": "Tên cửa hàng",
+    "phone": "Số điện thoại",
+    "authRequired": "Yêu cầu xác thực",
+    "authRequiredDesc": "Bạn cần phải đăng nhập để đặt hàng.",
+    "goToLogin": "Đi đến trang đăng nhập"
+  },
+  "products": {
+    "name": "Tên sản phẩm",
+    "description": "Mô tả",
+    "image": "Hình ảnh",
+    "price": "Giá",
+    "addToCart": "Thêm vào giỏ",
+    "outOfStock": "Hết hàng",
+    "inStock": "Còn hàng"
+  },
+  "checkout": {
+    "title": "Thanh toán",
+    "review": "Xem lại đơn hàng",
+    "placeOrder": "Đặt hàng",
+    "orderPlaced": "Đặt hàng thành công",
+    "thankYou": "Cảm ơn bạn đã đặt hàng!"
+  },
+  "validation": {
+    "errorTitle": "Lỗi xác thực",
+    "phoneRequired": "Số điện thoại là bắt buộc.",
+    "phoneInvalid": "Vui lòng nhập số điện thoại hợp lệ gồm 10 chữ số.",
+    "shopNameRequired": "Tên cửa hàng là bắt buộc.",
+    "eventRequired": "Vui lòng chọn một sự kiện."
+  },
+  "admin": {
+    "dashboard": "Bảng điều khiển",
+    "login": "Đăng nhập quản trị",
+    "loginDescription": "Nhập thông tin đăng nhập để truy cập bảng điều khiển",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "signIn": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "overview": "Tổng quan",
+    "analytics": "Phân tích",
+    "management": "Quản lý"
+  }
+}

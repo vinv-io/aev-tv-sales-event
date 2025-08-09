@@ -1,0 +1,17 @@
+# Docker's git-like ignore file
+# See https://docs.docker.com/engine/reference/builder/#dockerignore-file
+
+# Git
+.git
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Node
+node_modules
+npm-debug.log
+
+# Next.js
+.next
