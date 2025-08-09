@@ -1,11 +1,8 @@
 import type { ID, LocalizedString, Timestamp, Status, Currency } from './common';
 
-export type EventType = 'simple_packages' | 'complex_packages';
-
 export type Event = {
   id: ID;
   name: LocalizedString | string;
-  type?: EventType;
   startDate: Timestamp;
   endDate: Timestamp;
   status: Status;

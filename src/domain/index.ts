@@ -9,7 +9,6 @@ export * from './entities/LeaderboardEntry';
 
 export * from './value-objects/LocalizedText';
 export * from './value-objects/DateRange';
-export * from './value-objects/EventType';
 
 export * from './repositories/IEventRepository';
 export * from './repositories/IProductRepository';

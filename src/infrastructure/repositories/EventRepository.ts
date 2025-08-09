@@ -1,7 +1,6 @@
 import { Event } from '../../domain/entities/Event';
 import { IEventRepository } from '../../domain/repositories/IEventRepository';
 import { LocalizedText } from '../../domain/value-objects/LocalizedText';
-import { EventType } from '../../domain/value-objects/EventType';
 import { DateRange } from '../../domain/value-objects/DateRange';
 
 // Import your existing data sources
@@ -32,10 +31,9 @@ export class EventRepository implements IEventRepository {
   async save(event: Event): Promise<Event> {
     const plainObject = event.toPlainObject();
     
-    // Convert domain EventType to legacy database format
+    // Remove type field since it's no longer part of the domain
     const dbPayload = {
-      ...plainObject,
-      type: plainObject.type as any // Type assertion to handle legacy format
+      ...plainObject
     };
     
     // Check if event exists
@@ -79,7 +77,6 @@ export class EventRepository implements IEventRepository {
     return new Event(
       rawEvent.id,
       LocalizedText.fromPlainObject(rawEvent.name),
-      EventType.fromString(rawEvent.type || 'simple_packages'),
       new DateRange(
         convertDateFormat(rawEvent.startDate), 
         convertDateFormat(rawEvent.endDate)

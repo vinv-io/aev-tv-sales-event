@@ -42,13 +42,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { PlusCircle, MoreHorizontal, Edit, Trash2, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import {
     DropdownMenu,
@@ -73,8 +66,6 @@ export default function EventsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [createStatus, setCreateStatus] = useState(true);
     const [editStatus, setEditStatus] = useState(true);
-    const [createEventType, setCreateEventType] = useState('simple_packages');
-    const [editEventType, setEditEventType] = useState('simple_packages');
 
     const fetchEvents = async () => {
         const fetchedEvents = await getEventsAction() as Event[];
@@ -106,7 +97,6 @@ export default function EventsPage() {
             fetchEvents();
             setCreateDialogOpen(false);
             setCreateStatus(true); // Reset status to default
-            setCreateEventType('simple_packages'); // Reset event type to default
             form.reset();
         } catch (error) {
             console.error('Failed to create event:', error);
@@ -139,7 +129,6 @@ export default function EventsPage() {
       const openEditDialog = (event: Event) => {
         setSelectedEvent(event);
         setEditStatus(event.status);
-        setEditEventType(event.type || 'simple_packages');
         setEditDialogOpen(true);
       }
 
@@ -189,20 +178,6 @@ export default function EventsPage() {
                                       <Input id="name_vi" name="name_vi" className="col-span-3" required />
                                   </div>
                                   <div className="grid grid-cols-4 items-center gap-4">
-                                      <Label htmlFor="type" className="text-right">Event Type</Label>
-                                      <Select value={createEventType} onValueChange={setCreateEventType}>
-                                        <SelectTrigger className="col-span-3">
-                                          <SelectValue placeholder="Select event type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          <SelectItem value="simple_packages">Simple Packages</SelectItem>
-                                          <SelectItem value="complex_packages">Complex Packages</SelectItem>
-                                          <SelectItem value="flash_sale">Flash Sale</SelectItem>
-                                          <SelectItem value="seasonal">Seasonal</SelectItem>
-                                        </SelectContent>
-                                      </Select>
-                                  </div>
-                                  <div className="grid grid-cols-4 items-center gap-4">
                                       <Label htmlFor="startDate" className="text-right">Start Date</Label>
                                       <Input id="startDate" name="startDate" type="date" className="col-span-3" required />
                                   </div>
@@ -219,7 +194,6 @@ export default function EventsPage() {
                                           onCheckedChange={setCreateStatus}
                                       />
                                   </div>
-                                  <input type="hidden" name="type" value={createEventType} />
                                   <input type="hidden" name="status" value={createStatus.toString()} />
                               </div>
                           </form>
@@ -309,20 +283,6 @@ export default function EventsPage() {
                                             <Input id="edit-name_vi" name="name_vi" className="col-span-3" defaultValue={selectedEvent ? (typeof selectedEvent.name === 'object' ? selectedEvent.name.vi : selectedEvent.name) : ''} required />
                                         </div>
                                         <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label htmlFor="edit-type" className="text-right">Event Type</Label>
-                                            <Select value={editEventType} onValueChange={setEditEventType}>
-                                              <SelectTrigger className="col-span-3">
-                                                <SelectValue placeholder="Select event type" />
-                                              </SelectTrigger>
-                                              <SelectContent>
-                                                <SelectItem value="simple_packages">Simple Packages</SelectItem>
-                                                <SelectItem value="complex_packages">Complex Packages</SelectItem>
-                                                <SelectItem value="flash_sale">Flash Sale</SelectItem>
-                                                <SelectItem value="seasonal">Seasonal</SelectItem>
-                                              </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="grid grid-cols-4 items-center gap-4">
                                             <Label htmlFor="edit-startDate" className="text-right">Start Date</Label>
                                             <Input id="edit-startDate" name="startDate" type="date" className="col-span-3" defaultValue={selectedEvent?.startDate ? formatDateForInput(selectedEvent.startDate) : ''} required />
                                         </div>
@@ -339,7 +299,6 @@ export default function EventsPage() {
                                                 onCheckedChange={setEditStatus}
                                             />
                                         </div>
-                                        <input type="hidden" name="type" value={editEventType} />
                                         <input type="hidden" name="status" value={editStatus.toString()} />
                                     </div>
                                 </form>

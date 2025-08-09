@@ -13,7 +13,6 @@ datasource db {
 model Event {
   id          String  @id
   name        String  // JSON string for LocalizedString
-  type        String  // EventType
   startDate   String  @map("start_date")
   endDate     String  @map("end_date")
   status      Boolean

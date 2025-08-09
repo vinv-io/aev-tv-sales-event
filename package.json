@@ -13,7 +13,10 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "db:clear": "tsx scripts/quick-clear.ts",
+    "db:clear-detailed": "tsx scripts/show-and-clear-data.ts",
+    "db:status": "tsx scripts/show-status.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",

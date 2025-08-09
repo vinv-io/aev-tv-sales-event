@@ -91,11 +91,15 @@ export default function ProductsPage() {
         const form = e.currentTarget;
         const formData = new FormData(form);
         
-        await createProductAction(formData);
-        await createProductAction(formData);
-        fetchProducts();
-        setCreateDialogOpen(false);
-        form.reset();
+        try {
+            await createProductAction(formData);
+            fetchProducts();
+            setCreateDialogOpen(false);
+            form.reset();
+        } catch (error) {
+            console.error('Failed to create product:', error);
+            alert(`Failed to create product: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
       };
       
       const handleEditProduct = async (e: React.FormEvent<HTMLFormElement>) => {

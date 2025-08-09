@@ -1,4 +1,4 @@
-import type { Event, EventType } from '@/types';
+import type { Event } from '@/types';
 import { prisma } from '@/lib/database';
 import { format, isWithinInterval } from 'date-fns';
 
@@ -11,7 +11,6 @@ export class EventService {
     return allEvents.map(e => ({
       ...e,
       name: JSON.parse(e.name as string),
-      type: e.type as EventType,
       startDate: format(new Date(e.startDate), 'dd-MM-yyyy'),
       endDate: format(new Date(e.endDate), 'dd-MM-yyyy')
     }));
@@ -32,7 +31,6 @@ export class EventService {
     ).map(e => ({
       ...e,
       name: JSON.parse(e.name as string),
-      type: e.type as EventType,
       startDate: format(new Date(e.startDate), 'dd-MM-yyyy'),
       endDate: format(new Date(e.endDate), 'dd-MM-yyyy')
     }));
@@ -47,7 +45,6 @@ export class EventService {
     const newEvent = {
       id: `EVT${Date.now()}`,
       name: JSON.stringify(eventData.name),
-      type: eventData.type || 'simple_packages',
       startDate: eventData.startDate,
       endDate: eventData.endDate,
       status: eventData.status,
@@ -60,7 +57,6 @@ export class EventService {
     return {
       ...result,
       name: JSON.parse(result.name as string),
-      type: result.type as EventType,
       startDate: format(new Date(result.startDate), 'dd-MM-yyyy'),
       endDate: format(new Date(result.endDate), 'dd-MM-yyyy')
     };
@@ -83,7 +79,6 @@ export class EventService {
     return {
       ...result,
       name: JSON.parse(result.name as string),
-      type: result.type as EventType,
       startDate: format(new Date(result.startDate), 'dd-MM-yyyy'),
       endDate: format(new Date(result.endDate), 'dd-MM-yyyy')
     };

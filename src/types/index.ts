@@ -11,6 +11,5 @@ export type {
   Order,
   CheckIn,
   Package,
-  EventType,
   PackageType,
 } from './database';

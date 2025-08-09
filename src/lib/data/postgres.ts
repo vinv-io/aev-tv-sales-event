@@ -3,7 +3,7 @@
 
 import { prisma } from '../database/prisma';
 import { format, isWithinInterval } from 'date-fns';
-import type { Customer, Event, Product, Order, CheckIn, LeaderboardEntry, Package, EventType } from './types';
+import type { Customer, Event, Product, Order, CheckIn, LeaderboardEntry, Package } from './types';
 
 
 // Events
@@ -13,7 +13,6 @@ export const getEvents = async (): Promise<Event[]> => {
         ...e,
         name: JSON.parse(e.name as string),
         description: e.description ? JSON.parse(e.description) : undefined,
-        type: e.type as EventType,
         startDate: format(new Date(e.startDate), 'dd-MM-yyyy'),
         endDate: format(new Date(e.endDate), 'dd-MM-yyyy'),
         image: e.image || undefined,
@@ -30,7 +29,6 @@ export const getActiveEvents = async (): Promise<Event[]> => {
         ...e,
         name: JSON.parse(e.name as string),
         description: e.description ? JSON.parse(e.description) : undefined,
-        type: e.type as EventType,
         startDate: format(new Date(e.startDate), 'dd-MM-yyyy'),
         endDate: format(new Date(e.endDate), 'dd-MM-yyyy'),
         image: e.image || undefined,
@@ -43,7 +41,6 @@ export const createEvent = async (eventData: Omit<Event, 'id'>): Promise<Event> 
     const newEvent = {
         id: `EVT${Date.now()}`,
         name: JSON.stringify(eventData.name),
-        type: eventData.type || 'simple_packages',
         startDate: eventData.startDate,
         endDate: eventData.endDate,
         status: eventData.status,
@@ -58,7 +55,6 @@ export const createEvent = async (eventData: Omit<Event, 'id'>): Promise<Event> 
         ...result,
         name: JSON.parse(result.name as string),
         description: (result as any).description ? JSON.parse((result as any).description) : undefined,
-        type: result.type as EventType,
         startDate: format(new Date(result.startDate), 'dd-MM-yyyy'),
         endDate: format(new Date(result.endDate), 'dd-MM-yyyy'),
         image: result.image || undefined,
@@ -83,7 +79,6 @@ export const updateEvent = async (id: string, eventData: Partial<Event>): Promis
         ...result,
         name: JSON.parse(result.name as string),
         description: (result as any).description ? JSON.parse((result as any).description) : undefined,
-        type: result.type as EventType,
         startDate: format(new Date(result.startDate), 'dd-MM-yyyy'),
         endDate: format(new Date(result.endDate), 'dd-MM-yyyy'),
         image: result.image || undefined,

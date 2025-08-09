@@ -12,12 +12,9 @@ export type Product = {
     aiHint: string;
 };
 
-export type EventType = 'simple_packages' | 'complex_packages';
-
 export type Event = {
     id: string;
     name: LocalizedString | string;
-    type?: EventType;
     startDate: string;
     endDate: string;
     status: boolean;

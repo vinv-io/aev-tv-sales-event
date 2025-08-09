@@ -2,12 +2,10 @@ import { Event } from '../../domain/entities/Event';
 import { IEventRepository } from '../../domain/repositories/IEventRepository';
 import { NotFoundError, BusinessRuleError } from '../../shared/errors/DomainErrors';
 import { LocalizedText } from '../../domain/value-objects/LocalizedText';
-import { EventType } from '../../domain/value-objects/EventType';
 import { DateRange } from '../../domain/value-objects/DateRange';
 
 export interface CreateEventRequest {
   name: { en: string; vi: string };
-  type: string;
   startDate: string;
   endDate: string;
   status: boolean;
@@ -18,7 +16,6 @@ export interface CreateEventRequest {
 
 export interface UpdateEventRequest {
   name?: { en: string; vi: string };
-  type?: string;
   startDate?: string;
   endDate?: string;
   status?: boolean;
@@ -69,7 +66,6 @@ export class CreateEventUseCase {
     const event = new Event(
       `EVT${Date.now()}`, // Generate ID
       new LocalizedText(request.name.en, request.name.vi),
-      EventType.fromString(request.type),
       dateRange,
       request.status,
       request.description ? new LocalizedText(request.description.en, request.description.vi) : undefined,
@@ -97,10 +93,6 @@ export class UpdateEventUseCase {
     
     if (request.name) {
       updates.name = new LocalizedText(request.name.en, request.name.vi);
-    }
-    
-    if (request.type) {
-      updates.type = EventType.fromString(request.type);
     }
     
     if (request.startDate || request.endDate) {

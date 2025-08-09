@@ -48,7 +48,6 @@ export async function createEventAction(formData: FormData) {
   try {
     const name_en = formData.get('name_en') as string;
     const name_vi = formData.get('name_vi') as string;
-    const type = formData.get('type') as string;
     const startDate = formData.get('startDate') as string;
     const endDate = formData.get('endDate') as string;
     const status = formData.get('status') === 'true';
@@ -56,14 +55,13 @@ export async function createEventAction(formData: FormData) {
     console.log('Form data received:', {
       name_en,
       name_vi,
-      type,
       startDate,
       endDate,
       status
     });
 
     // Validate required fields
-    if (!name_en || !name_vi || !type || !startDate || !endDate) {
+    if (!name_en || !name_vi || !startDate || !endDate) {
       throw new Error('Missing required fields');
     }
 
@@ -74,7 +72,6 @@ export async function createEventAction(formData: FormData) {
     
     const eventData = {
       name,
-      type,
       startDate,
       endDate,
       status
@@ -102,9 +99,6 @@ export async function updateEventAction(id: string, formData: FormData) {
     if (nameEn && nameVi) {
       updateData.name = { en: nameEn, vi: nameVi };
     }
-    
-    const type = formData.get('type') as string;
-    if (type) updateData.type = type;
     
     const startDate = formData.get('startDate') as string;
     if (startDate) updateData.startDate = startDate;

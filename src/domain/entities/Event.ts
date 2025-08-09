@@ -1,4 +1,3 @@
-import { EventType } from '../value-objects/EventType';
 import { DateRange } from '../value-objects/DateRange';
 import { LocalizedText } from '../value-objects/LocalizedText';
 
@@ -6,7 +5,6 @@ export class Event {
   constructor(
     public readonly id: string,
     public readonly name: LocalizedText,
-    public readonly type: EventType,
     public readonly dateRange: DateRange,
     public readonly status: boolean,
     public readonly description?: LocalizedText,
@@ -19,12 +17,11 @@ export class Event {
   }
 
   public canAcceptOrders(): boolean {
-    return this.isActive() && this.type !== EventType.EXPIRED;
+    return this.isActive();
   }
 
   public update(updates: Partial<{
     name: LocalizedText;
-    type: EventType;
     dateRange: DateRange;
     status: boolean;
     description: LocalizedText;
@@ -34,7 +31,6 @@ export class Event {
     return new Event(
       this.id,
       updates.name ?? this.name,
-      updates.type ?? this.type,
       updates.dateRange ?? this.dateRange,
       updates.status ?? this.status,
       updates.description ?? this.description,
@@ -47,7 +43,6 @@ export class Event {
     return {
       id: this.id,
       name: this.name.toPlainObject(),
-      type: this.type.value,
       startDate: this.dateRange.startDate,
       endDate: this.dateRange.endDate,
       status: this.status,
