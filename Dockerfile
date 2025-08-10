@@ -11,7 +11,6 @@ RUN npm ci --omit=dev  # or npm install --frozen-lockfile for Yarn/Pnpm equivale
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=base /app/node_modules ./node_modules
-COPY . .
 COPY src ./src
 RUN npm run build
 
