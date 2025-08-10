@@ -21,7 +21,7 @@ jobs:
         script: |
           cd ~/myapp
 
-          # 1. Create/overwrite .env from GitHub secrets
+          # 1. Update .env from GitHub Secrets
           cat > .env <<EOL
           NODE_ENV=${{ secrets.ENV_NODE_ENV }}
           DATABASE_URL=${{ secrets.ENV_DATABASE_URL }}
@@ -29,9 +29,15 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.ENV_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           EOL
 
-          # 2. Pull latest code and rebuild
-          git pull origin main
+          # 2. Pull latest code and rebuild container
+          git fetch origin main
+          git reset --hard origin/main
           docker compose down
           docker compose build --no-cache
           docker compose up -d
+
+          # 3. Run Prisma migrations inside the running container
+          docker compose exec app npx prisma migrate deploy
+          
+          # 4. Optional cleanup
           docker system prune -af
