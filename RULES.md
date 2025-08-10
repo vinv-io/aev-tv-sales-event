@@ -26,3 +26,6 @@
 ## Linting & Formatting
 - Follow ESLint and Prettier rules — no disabled rules unless justified.
 - Use camelCase for variables and PascalCase for components.
+
+## Docker
+- Use docker compose latest version
