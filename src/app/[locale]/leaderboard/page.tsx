@@ -55,9 +55,13 @@ export default function LeaderboardPage() {
             setLeaderboardData(leaderboard);
             setProducts(prods);
             setSortedEvents(sorted);
-            setSelectedEvent(newestEventId);
+            setSelectedEvent(prev => prev || newestEventId);
         }
         fetchData();
+
+        const intervalId = setInterval(fetchData, 5000); // Poll every 5 seconds
+
+        return () => clearInterval(intervalId);
     }, [])
 
     const content = {

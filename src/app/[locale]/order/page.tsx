@@ -76,17 +76,39 @@ export default function OrderPage() {
 
   const currentContent = content[locale as keyof typeof content];
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      try {
+        const prods = await getProducts() as Product[];
+        setProducts(prods);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+        toast({
+          variant: 'destructive',
+          title: currentContent.errorTitle,
+          description: currentContent.loadProductsError,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    if(customerInfo.phone && customerInfo.shopName) {
+        fetchProducts();
+    }
+  }, [toast, currentContent.errorTitle, currentContent.loadProductsError, customerInfo.phone, customerInfo.shopName]);
+
   // Early return if user is not authenticated
   if (!customerInfo.phone || !customerInfo.shopName) {
     return (
-        <div className="container mx-auto p-4 flex flex-col items-center justify-center text-center h-[60vh]">
-            <Card className="w-full max-w-md">
+        <div class="container mx-auto p-4 flex flex-col items-center justify-center text-center h-[60vh]">
+            <Card class="w-full max-w-md">
                 <CardHeader>
                     <CardTitle>{currentContent.authRequired}</CardTitle>
                     <CardDescription>{currentContent.authRequiredDesc}</CardDescription>
                 </CardHeader>
                 <CardFooter>
-                    <Button onClick={() => router.push('/')} className="w-full">
+                    <Button onClick={() => router.push('/')} class="w-full">
                         {currentContent.goToLogin}
                     </Button>
                 </CardFooter>
@@ -109,26 +131,6 @@ export default function OrderPage() {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      try {
-        const prods = await getProducts() as Product[];
-        setProducts(prods);
-      } catch (error) {
-        console.error('Failed to fetch products:', error);
-        toast({
-          variant: 'destructive',
-          title: currentContent.errorTitle,
-          description: currentContent.loadProductsError,
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchProducts();
-  }, [toast, currentContent.errorTitle, currentContent.loadProductsError]);
 
   const handleQuantityChange = (productId: string, amount: number) => {
     try {

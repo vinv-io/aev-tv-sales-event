@@ -95,76 +95,74 @@ export default function CheckoutPage() {
     }
   };
 
-  if (cart.length === 0) {
-    return (
-        <div className="container mx-auto p-4 flex flex-col items-center justify-center text-center h-[60vh]">
-            <Card className="w-full max-w-md">
-                <CardHeader>
-                    <CardTitle>{currentContent.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p>{currentContent.emptyCart}</p>
-                </CardContent>
-                <CardFooter>
-                    <Button onClick={() => router.push('/order')} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
-                        {currentContent.backToOrder}
-                    </Button>
-                </CardFooter>
-            </Card>
-        </div>
-    )
-  }
-
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-      <Card className="max-w-4xl mx-auto shadow-lg">
-        <CardHeader className="text-center relative">
-            <Button variant="ghost" className="absolute left-4 top-4" onClick={() => router.back()}>
-                <ChevronLeft className="mr-2 h-4 w-4" />
+      {cart.length === 0 ? (
+        <div className="flex flex-col items-center justify-center text-center h-[60vh]">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle>{currentContent.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>{currentContent.emptyCart}</p>
+            </CardContent>
+            <CardFooter>
+              <Button onClick={() => router.push('/order')} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
                 {currentContent.backToOrder}
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      ) : (
+        <Card className="max-w-4xl mx-auto shadow-lg">
+          <CardHeader className="text-center relative">
+            <Button variant="ghost" className="absolute left-4 top-4" onClick={() => router.back()}>
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              {currentContent.backToOrder}
             </Button>
-          <CardTitle className="text-3xl font-headline pt-12 md:pt-0">{currentContent.title}</CardTitle>
-          <CardDescription>{currentContent.description}</CardDescription>
-        </CardHeader>
-        <CardContent className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">{currentContent.customerInfo}</h3>
-            <div className="space-y-2 text-sm">
+            <CardTitle className="text-3xl font-headline pt-12 md:pt-0">{currentContent.title}</CardTitle>
+            <CardDescription>{currentContent.description}</CardDescription>
+          </CardHeader>
+          <CardContent className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">{currentContent.customerInfo}</h3>
+              <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                    <span className="text-muted-foreground">{currentContent.shopName}:</span>
-                    <span className="font-medium">{customerInfo.shopName}</span>
+                  <span className="text-muted-foreground">{currentContent.shopName}:</span>
+                  <span className="font-medium">{customerInfo.shopName}</span>
                 </div>
-                 <div className="flex justify-between">
-                    <span className="text-muted-foreground">{currentContent.phone}:</span>
-                    <span className="font-medium">{customerInfo.phone}</span>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">{currentContent.phone}:</span>
+                  <span className="font-medium">{customerInfo.phone}</span>
                 </div>
+              </div>
             </div>
-          </div>
-           <div className="space-y-4">
-                <h3 className="text-lg font-semibold">{currentContent.orderSummary}</h3>
-                <div className="space-y-2">
-                    {cart.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center text-sm">
-                        <p className="font-medium">{item.name[locale as keyof typeof item.name]}</p>
-                        <p className="text-muted-foreground">
-                        {item.quantity}
-                        </p>
-                    </div>
-                    ))}
-                </div>
-                <Separator />
-                <div className="flex justify-between items-center text-lg font-bold">
-                    <p>{currentContent.total}</p>
-                    <p className="text-primary">{totalQuantity}</p>
-                </div>
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">{currentContent.orderSummary}</h3>
+              <div className="space-y-2">
+                {cart.map((item) => (
+                  <div key={item.id} className="flex justify-between items-center text-sm">
+                    <p className="font-medium">{item.name[locale as keyof typeof item.name]}</p>
+                    <p className="text-muted-foreground">
+                      {item.quantity}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <Separator />
+              <div className="flex justify-between items-center text-lg font-bold">
+                <p>{currentContent.total}</p>
+                <p className="text-primary">{totalQuantity}</p>
+              </div>
             </div>
-        </CardContent>
-        <CardFooter>
-          <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6" onClick={handleConfirmOrder}>
-            {currentContent.confirmOrder}
-          </Button>
-        </CardFooter>
-      </Card>
+          </CardContent>
+          <CardFooter>
+            <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6" onClick={handleConfirmOrder}>
+              {currentContent.confirmOrder}
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
     </div>
   );
 }
