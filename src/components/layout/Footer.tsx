@@ -80,15 +80,6 @@ const ContactSection = memo(({ t }: { t: any }) => (
           Hotline: 1800 585832
         </a>
       </div>
-      <div className="flex items-center gap-2">
-        <Mail className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-        <a 
-          href="mailto:contact@aquavn.com" 
-          className="hover:text-primary transition-colors duration-200 focus:text-primary outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm"
-        >
-          contact@aquavn.com
-        </a>
-      </div>
     </address>
   </div>
 ));
