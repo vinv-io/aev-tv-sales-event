@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
 
     - name: Deploy over SSH
@@ -20,6 +20,16 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         script: |
           cd ~/myapp
+
+          # 1. Create/overwrite .env from GitHub secrets
+          cat > .env <<EOL
+          NODE_ENV=${{ secrets.ENV_NODE_ENV }}
+          DATABASE_URL=${{ secrets.ENV_DATABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.ENV_NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.ENV_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          EOL
+
+          # 2. Pull latest code and rebuild
           git pull origin main
           docker compose down
           docker compose build --no-cache
