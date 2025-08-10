@@ -8,10 +8,52 @@
 # Docker
 .dockerignore
 Dockerfile
+docker-compose.yml
 
 # Node
 node_modules
 npm-debug.log
+.npm
 
 # Next.js
 .next
+out/
+
+# Environment variables
+.env*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Coverage and testing
+coverage/
+.nyc_output
+.coverage
+
+# Build artifacts
+dist/
+build/
+
+# Development files
+docs/
+README.md
+*.md
+!package.json
+
+# Database files (for SQLite)
+*.db
+*.sqlite
+*.sqlite3
+prisma/dev.db
