@@ -12,6 +12,7 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=base /app/node_modules ./node_modules
 COPY . .
+COPY src ./src
 RUN npm run build
 
 # 3. Runner image
