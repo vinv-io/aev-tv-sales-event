@@ -2,7 +2,7 @@
 FROM node:22-alpine AS base
 WORKDIR /app
 COPY package.json ./
-COPY prisma/schema.prisma ./prisma/schema.prisma # Copy schema.prisma for Prisma client generation
+COPY prisma ./prisma # Copy the entire prisma directory
 RUN npm install --frozen-lockfile
 COPY prisma ./prisma
 RUN npx prisma generate
