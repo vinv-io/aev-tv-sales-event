@@ -3,10 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - ./src:/app/src
-      - ./public:/app/public
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=development
+    env_file: .env
+    restart: unless-stopped
