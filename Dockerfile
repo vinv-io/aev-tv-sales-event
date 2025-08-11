@@ -16,14 +16,14 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy source code
 COPY . .
 
-# Copy environment file for production build
-COPY .env.prod .env.prod
+# Copy environment file
+COPY .env .env
 
 # Generate Prisma client
 RUN npx prisma generate
 
-# Build the application using production environment
-RUN npx dotenv -e .env.prod -- npm run build
+# Build the application using environment variables
+RUN npx dotenv -e .env -- npm run build
 
 # Ensure proper permissions for node_modules
 RUN chown -R 1001:1001 /app/node_modules
@@ -39,8 +39,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Install sharp for image optimization
+# Install sharp for image optimization and dotenv-cli for environment handling
 RUN npm install sharp
+RUN npm install -g dotenv-cli
 
 # Copy the built application
 COPY --from=builder /app/.next/standalone ./
@@ -52,8 +53,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
-# Copy production environment file
-COPY --from=builder --chown=nextjs:nodejs /app/.env.prod ./.env.prod
+# Copy environment file
+COPY --from=builder --chown=nextjs:nodejs /app/.env ./.env
 
 # Create cache directory with proper permissions
 RUN mkdir -p /app/.next/cache && chown -R nextjs:nodejs /app/.next/cache
@@ -65,5 +66,6 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Use dotenv to load production environment and start the server
-CMD ["npx", "dotenv", "-e", ".env.prod", "--", "node", "server.js"]
+# Use dotenv to load environment and start the server
+CMD ["npx", "dotenv", "-e", ".env", "--", "node", "server.js"]
+

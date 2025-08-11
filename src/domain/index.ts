@@ -17,3 +17,25 @@ export * from './repositories/IOrderRepository';
 export * from './repositories/ICheckInRepository';
 export * from './repositories/IPackageRepository';
 export * from './repositories/ILeaderboardRepository';
+
+// Domain Types (with explicit naming to avoid conflicts)
+export type {
+  DomainId,
+  Timestamps,
+  LocalizedContent,
+  EventData,
+  ProductData,
+  CustomerData,
+  OrderData,
+  OrderProduct,
+  OrderStatus,
+  CheckInData,
+  PackageData,
+  LeaderboardData,
+  BusinessRule,
+  DomainEvent,
+  Money,
+  PhoneNumber,
+  DomainErrorType,
+  DomainErrorInfo
+} from './types';

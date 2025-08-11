@@ -1,11 +1,15 @@
 'use server';
 
+// Legacy Server Actions - DEPRECATED
+// Please use src/presentation/server-actions/clean-actions.ts for new implementations
+// This file is kept for backward compatibility during migration
+
 // Import services instead of direct database access
 import { EventService, ProductService, CustomerService } from '@/services';
 import type { Event, Product, Customer, Order, CheckIn, LeaderboardEntry, Package } from '@/types';
 
 // Import legacy functions for features not yet migrated
-import * as prismaDb from './postgres';
+import * as prismaDb from '../../infrastructure/adapters/legacy-postgres-adapter';
 
 // Events - Using new service layer
 export const getEvents = async (): Promise<Event[]> => EventService.getAll();

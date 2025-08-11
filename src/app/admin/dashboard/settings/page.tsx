@@ -54,7 +54,7 @@ export default function SettingsPage() {
            <Card>
             <CardHeader>
               <CardTitle>Footer Information</CardTitle>
-              <CardDescription>Update the contact details in your site's footer.</CardDescription>
+              <CardDescription>Update the contact details in your site&apos;s footer.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">

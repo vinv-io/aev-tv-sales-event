@@ -1,5 +1,9 @@
+// Legacy Event Service - DEPRECATED
+// Please use src/application/services/EventApplicationService.ts for new implementations
+// This file is kept for backward compatibility during migration
+
 import type { Event } from '@/types';
-import { prisma } from '@/lib/database';
+import { prisma } from '@/infrastructure/database';
 import { format, isWithinInterval } from 'date-fns';
 
 export class EventService {
@@ -95,7 +99,7 @@ export class EventService {
       return new Date(dateStr);
     };
 
-    const updateData: any = { ...eventData };
+    const updateData: Record<string, unknown> = { ...eventData };
     if (updateData.name) {
       updateData.name = JSON.stringify(updateData.name);
     }

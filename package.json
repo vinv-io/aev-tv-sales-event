@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npx dotenv -e .env.dev -- next dev -p 3000",
-    "build": "npx dotenv -e .env.prod -- next build",
-    "start": "npx dotenv -e .env.prod -- next start",
+    "dev": "npx dotenv -e .env -- next dev -p 3000",
+    "build": "npx dotenv -e .env -- next build",
+    "start": "npx dotenv -e .env -- next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "tailwind:check": "tailwindcss --check-config",
