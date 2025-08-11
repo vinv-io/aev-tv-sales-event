@@ -7,14 +7,12 @@ export interface CreateProductRequest {
   name: { en: string; vi: string };
   description: { en: string; vi: string };
   image?: string;
-  aiHint?: string;
 }
 
 export interface UpdateProductRequest {
   name?: { en: string; vi: string };
   description?: { en: string; vi: string };
   image?: string;
-  aiHint?: string;
 }
 
 export class GetAllProductsUseCase {
@@ -42,11 +40,10 @@ export class CreateProductUseCase {
 
   async execute(request: CreateProductRequest): Promise<Product> {
     const product = new Product(
-      `PROD${Date.now()}`, // Generate ID
+      `PROD${Date.now()}`,
       new LocalizedText(request.name.en, request.name.vi),
       new LocalizedText(request.description.en, request.description.vi),
-      request.image || 'https://placehold.co/600x400.png',
-      request.aiHint || 'product package'
+      request.image || 'https://placehold.co/600x400.png'
     );
 
     return await this.productRepository.save(product);
@@ -74,10 +71,6 @@ export class UpdateProductUseCase {
     
     if (request.image) {
       updates.image = request.image;
-    }
-    
-    if (request.aiHint) {
-      updates.aiHint = request.aiHint;
     }
 
     const updatedProduct = existingProduct.update(updates);

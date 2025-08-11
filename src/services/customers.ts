@@ -39,7 +39,7 @@ export class CustomerService {
       id: `CUST${Date.now()}`,
       phone: customerData.phone,
       shopName: customerData.shopName,
-      joined: format(now, 'dd-MM-yyyy'),
+      joined: now, // Pass Date object directly to Prisma
     };
     
     const result = await prisma.customer.create({

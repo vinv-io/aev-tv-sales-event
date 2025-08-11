@@ -83,8 +83,7 @@ export class EventRepository implements IEventRepository {
       ),
       rawEvent.status,
       rawEvent.description ? LocalizedText.fromPlainObject(rawEvent.description) : undefined,
-      rawEvent.image,
-      rawEvent.aiHint
+      rawEvent.image
     );
   }
 }

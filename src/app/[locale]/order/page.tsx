@@ -101,14 +101,14 @@ export default function OrderPage() {
   // Early return if user is not authenticated
   if (!customerInfo.phone || !customerInfo.shopName) {
     return (
-        <div class="container mx-auto p-4 flex flex-col items-center justify-center text-center h-[60vh]">
-            <Card class="w-full max-w-md">
+        <div className="container mx-auto p-4 flex flex-col items-center justify-center text-center h-[60vh]">
+            <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle>{currentContent.authRequired}</CardTitle>
                     <CardDescription>{currentContent.authRequiredDesc}</CardDescription>
                 </CardHeader>
                 <CardFooter>
-                    <Button onClick={() => router.push('/')} class="w-full">
+                    <Button onClick={() => router.push('/')} className="w-full">
                         {currentContent.goToLogin}
                     </Button>
                 </CardFooter>
@@ -242,7 +242,7 @@ export default function OrderPage() {
                 <Card key={product.id} className="flex flex-col">
                   <CardHeader>
                     <div className="relative w-full h-48 rounded-t-lg overflow-hidden">
-                      <Image src={product.image} alt={productName} layout="fill" objectFit="cover" data-ai-hint={product.aiHint} />
+                      <Image src={product.image} alt={productName} layout="fill" objectFit="cover" />
                     </div>
                     <CardTitle className="pt-4">{productName}</CardTitle>
                     <CardDescription>{productDescription}</CardDescription>

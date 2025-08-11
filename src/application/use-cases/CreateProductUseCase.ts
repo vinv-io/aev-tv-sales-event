@@ -10,7 +10,6 @@ export class CreateProductUseCase {
     name: { en: string; vi: string };
     description: { en: string; vi: string };
     image: string;
-    aiHint?: string;
   }): Promise<Product> {
     const name = new LocalizedText(productData.name.en, productData.name.vi);
     const description = new LocalizedText(productData.description.en, productData.description.vi);
@@ -19,8 +18,7 @@ export class CreateProductUseCase {
       productData.id,
       name,
       description,
-      productData.image,
-      productData.aiHint || 'product package'
+      productData.image
     );
 
     return await this.productRepository.create(product);

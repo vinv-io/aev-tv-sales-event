@@ -15,7 +15,6 @@ export interface CartItem {
     en: string;
   };
   image: string;
-  aiHint: string;
   quantity: number;
   price?: number; // Added for future pricing features
   category?: string; // Added for better organization

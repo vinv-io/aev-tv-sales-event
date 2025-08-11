@@ -3,7 +3,8 @@
 /**
  * Quick Clear Data Script
  * 
- * Simple script to quickly clear all business data while preserving admin users.
+ * Simple script to quickly clear all business data.
+ * Admin authentication handled via environment variables.
  * Perfect for development and testing purposes.
  */
 
@@ -23,7 +24,7 @@ async function quickClear() {
     await prisma.event.deleteMany({});
 
     console.log('✅ All business data cleared successfully!');
-    console.log('🔐 Admin users and authentication data preserved.');
+    console.log('🔐 Simple admin authentication via environment variables.');
     
   } catch (error) {
     console.error('❌ Error during cleanup:', error);

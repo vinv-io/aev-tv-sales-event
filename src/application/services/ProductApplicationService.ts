@@ -29,7 +29,6 @@ export class ProductApplicationService {
     name: { en: string; vi: string };
     description: { en: string; vi: string };
     image: string;
-    aiHint?: string;
   }): Promise<Product> {
     return await this.createProductUseCase.execute(productData);
   }
@@ -42,7 +41,6 @@ export class ProductApplicationService {
     name: { en: string; vi: string };
     description: { en: string; vi: string };
     image: string;
-    aiHint: string;
   }>): Promise<Product> {
     return await this.updateProductUseCase.execute(id, updateData);
   }

@@ -1,12 +1,10 @@
 #!/usr/bin/env tsx
 
 /**
- * Clear All Data Script (Preserving Admin Users)
+ * Clear All Data Script (Simple Auth)
  * 
- * This script clears all business data from the database while preserving:
- * - Admin users and authentication data
- * - Admin roles and permissions
- * - NextAuth.js sessions and accounts
+ * This script clears all business data from the database.
+ * Simple authentication is handled via environment variables.
  * 
  * Business data that will be cleared:
  * - Events
@@ -22,7 +20,8 @@ const prisma = new PrismaClient();
 
 async function clearBusinessData() {
   console.log('🗑️  Starting database cleanup...');
-  console.log('⚠️  This will clear ALL business data but preserve admin users');
+  console.log('⚠️  This will clear ALL business data');
+  console.log('    (Simple authentication is handled via environment variables)');
   
   try {
     // Clear business data in the correct order to handle foreign key constraints
@@ -57,12 +56,8 @@ async function clearBusinessData() {
     console.log(`   - Check-ins: ${deletedCheckIns.count} deleted`);
     console.log('');
     
-    // Verify admin data is preserved
-    const adminUsers = await prisma.adminUser.count();
-    const adminRoles = await prisma.adminRole.count();
-    console.log('🔐 Admin data preserved:');
-    console.log(`   - Admin users: ${adminUsers} preserved`);
-    console.log(`   - Admin roles: ${adminRoles} preserved`);
+    // Simple auth - no admin data in database
+    console.log('🔐 Simple admin auth configured via environment variables');
     
   } catch (error) {
     console.error('❌ Error during database cleanup:', error);

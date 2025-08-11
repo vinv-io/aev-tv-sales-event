@@ -1,1 +1,0 @@
-// NextAuth removed. This route is deprecated.

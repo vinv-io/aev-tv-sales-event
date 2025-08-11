@@ -11,33 +11,14 @@ const sampleData = {
         en: 'Spring Product Launch 2025',
         vi: 'Ra Mắt Sản Phẩm Mùa Xuân 2025'
       }),
-      type: 'seasonal',
-      startDate: '2025-03-15',
-      endDate: '2025-04-15',
+      startDate: new Date('2025-03-15'),
+      endDate: new Date('2025-04-15'),
       status: true,
       description: JSON.stringify({
         en: 'Exciting spring product launch with special offers and promotions',
         vi: 'Sự kiện ra mắt sản phẩm mùa xuân với nhiều ưu đãi đặc biệt'
       }),
       image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=400&fit=crop',
-      aiHint: 'Spring themed product launch event with fresh and vibrant atmosphere'
-    },
-    {
-      id: 'event-2025-summer',
-      name: JSON.stringify({
-        en: 'Summer Sales Festival 2025',
-        vi: 'Lễ Hội Mua Sắm Mùa Hè 2025'
-      }),
-      type: 'flash_sale',
-      startDate: '2025-06-01',
-      endDate: '2025-08-31',
-      status: true,
-      description: JSON.stringify({
-        en: 'Massive summer sales with up to 50% discount on selected products',
-        vi: 'Đại hội giảm giá mùa hè với mức giảm lên đến 50% cho các sản phẩm được chọn'
-      }),
-      image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=400&fit=crop',
-      aiHint: 'Summer sales festival with hot deals and promotional activities'
     }
   ],
   products: [
@@ -52,7 +33,6 @@ const sampleData = {
         vi: 'Gói thiết yếu với 3 mặt hàng cao cấp cho nhu cầu hàng ngày'
       }),
       image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop',
-      aiHint: 'Premium quality package with 3 essential items'
     },
     {
       id: 'pack-5-deluxe',
@@ -65,33 +45,7 @@ const sampleData = {
         vi: 'Gói nâng cao với 5 mặt hàng được lựa chọn kỹ lưỡng cho giá trị tối đa'
       }),
       image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop',
-      aiHint: 'Deluxe quality package with 5 premium selected items'
-    },
-    {
-      id: 'pack-10-ultimate',
-      name: JSON.stringify({
-        en: 'Ultimate Pack 10',
-        vi: 'Gói Ultimate 10'
-      }),
-      description: JSON.stringify({
-        en: 'Complete package with 10 top-tier items for the ultimate experience',
-        vi: 'Gói hoàn chỉnh với 10 mặt hàng hàng đầu cho trải nghiệm tuyệt vời nhất'
-      }),
-      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop',
-      aiHint: 'Ultimate luxury package with 10 top-tier premium items'
     }
-  ],
-  customers: [
-    { id: 'cust-001', phone: '+84901234567', shopName: 'Cửa hàng Hoa Mai', joined: '2024-01-15' },
-    { id: 'cust-002', phone: '+84902345678', shopName: 'Shop Tiện Lợi 24h', joined: '2024-02-20' },
-    { id: 'cust-003', phone: '+84903456789', shopName: 'Siêu thị Mini Tâm An', joined: '2024-03-10' },
-    { id: 'cust-004', phone: '+84904567890', shopName: 'Cửa hàng Phương Nam', joined: '2024-04-05' },
-    { id: 'cust-005', phone: '+84905678901', shopName: 'Shop Gia Đình Việt', joined: '2024-05-12' },
-    { id: 'cust-006', phone: '+84906789012', shopName: 'Cửa hàng Sạch & Xanh', joined: '2024-06-08' },
-    { id: 'cust-007', phone: '+84907890123', shopName: 'Mini Mart Đông Dương', joined: '2024-07-18' },
-    { id: 'cust-008', phone: '+84908901234', shopName: 'Shop Thực Phẩm Organic', joined: '2024-08-02' },
-    { id: 'cust-009', phone: '+84909012345', shopName: 'Cửa hàng Bình Minh', joined: '2024-08-15' },
-    { id: 'cust-010', phone: '+84910123456', shopName: 'Siêu thị Hoàng Gia', joined: '2024-08-25' }
   ]
 };
 
@@ -154,10 +108,18 @@ const generateOrders = () => {
 
 async function seedSampleData() {
   try {
-    console.log('🌱 Seeding sample data for 2025...');
+    console.log('🌱 Seeding minimal sample data for 2025...');
+
+    // Clear existing data first
+    console.log('�️  Clearing existing data...');
+    await prisma.checkIn.deleteMany();
+    await prisma.order.deleteMany();
+    await prisma.customer.deleteMany();
+    await prisma.product.deleteMany();
+    await prisma.event.deleteMany();
 
     // Create Events
-    console.log('📅 Creating events...');
+    console.log('� Creating events...');
     for (const event of sampleData.events) {
       await prisma.event.upsert({
         where: { id: event.id },
@@ -165,10 +127,10 @@ async function seedSampleData() {
         create: event
       });
     }
-    console.log(`✅ Created ${sampleData.events.length} events`);
+    console.log(`✅ Created ${sampleData.events.length} event`);
 
-    // Create Products  
-    console.log('📦 Creating products...');
+    // Create Products (no prices)
+    console.log('� Creating products...');
     for (const product of sampleData.products) {
       await prisma.product.upsert({
         where: { id: product.id },
@@ -176,55 +138,15 @@ async function seedSampleData() {
         create: product
       });
     }
-    console.log(`✅ Created ${sampleData.products.length} products`);
+    console.log(`✅ Created ${sampleData.products.length} products (Pack 3, Pack 5)`);
 
-    // Create Customers
-    console.log('👥 Creating customers...');
-    for (const customer of sampleData.customers) {
-      await prisma.customer.upsert({
-        where: { id: customer.id },
-        update: customer,
-        create: customer
-      });
-    }
-    console.log(`✅ Created ${sampleData.customers.length} customers`);
-
-    // Create Check-ins
-    console.log('✅ Creating check-in records...');
-    const checkIns = generateCheckIns();
-    for (const checkIn of checkIns) {
-      await prisma.checkIn.upsert({
-        where: {
-          customerId_eventId: {
-            customerId: checkIn.customerId,
-            eventId: checkIn.eventId
-          }
-        },
-        update: checkIn,
-        create: checkIn
-      });
-    }
-    console.log(`✅ Created ${checkIns.length} check-in records`);
-
-    // Create Orders
-    console.log('🛒 Creating order records...');
-    const orders = generateOrders();
-    for (const order of orders) {
-      await prisma.order.upsert({
-        where: { orderId: order.orderId },
-        update: order,
-        create: order
-      });
-    }
-    console.log(`✅ Created ${orders.length} order records`);
-
-    console.log('\n🎉 Sample data seeding completed successfully!');
+    console.log('\n🎉 Minimal sample data seeding completed successfully!');
     console.log('\n📊 Summary:');
-    console.log(`   • ${sampleData.events.length} Events (Spring & Summer 2025)`);
-    console.log(`   • ${sampleData.products.length} Products (Pack 3, Pack 5, Pack 10)`);
-    console.log(`   • ${sampleData.customers.length} Customers (Vietnamese shops)`);
-    console.log(`   • ${checkIns.length} Check-in records`);
-    console.log(`   • ${orders.length} Order records`);
+    console.log(`   • ${sampleData.events.length} Event (Spring 2025)`);
+    console.log(`   • ${sampleData.products.length} Products (Pack 3, Pack 5) - No prices`);
+    console.log(`   • 0 Customers`);
+    console.log(`   • 0 Check-in records`);
+    console.log(`   • 0 Order records`);
 
   } catch (error) {
     console.error('❌ Error seeding sample data:', error);
@@ -236,7 +158,7 @@ async function seedSampleData() {
 
 seedSampleData()
   .then(() => {
-    console.log('\n✨ Done! You can now test the application with sample data.');
+    console.log('\n✨ Done! Minimal sample data ready for testing.');
     process.exit(0);
   })
   .catch((error) => {

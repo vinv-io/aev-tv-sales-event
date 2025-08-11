@@ -39,7 +39,8 @@ const nextConfig = {
   env: {
     DATA_SOURCE: process.env.DATA_SOURCE,
   },
-  output: 'standalone',
+  // Remove standalone output to avoid copy file issues
+  // output: 'standalone',
 };
 
 export default withNextIntl(nextConfig);

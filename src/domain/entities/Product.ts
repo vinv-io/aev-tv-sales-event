@@ -5,8 +5,7 @@ export class Product {
     public readonly id: string,
     public readonly name: LocalizedText,
     public readonly description: LocalizedText,
-    public readonly image: string,
-    public readonly aiHint: string
+    public readonly image: string
   ) {
     if (!id.trim()) {
       throw new Error('Product ID cannot be empty');
@@ -20,14 +19,12 @@ export class Product {
     name: LocalizedText;
     description: LocalizedText;
     image: string;
-    aiHint: string;
   }>): Product {
     return new Product(
       this.id,
       updates.name ?? this.name,
       updates.description ?? this.description,
-      updates.image ?? this.image,
-      updates.aiHint ?? this.aiHint
+      updates.image ?? this.image
     );
   }
 
@@ -53,8 +50,7 @@ export class Product {
       id: this.id,
       name: this.name.toPlainObject(),
       description: this.description.toPlainObject(),
-      image: this.image,
-      aiHint: this.aiHint
+      image: this.image
     };
   }
 
@@ -63,8 +59,7 @@ export class Product {
       obj.id,
       LocalizedText.fromPlainObject(obj.name),
       LocalizedText.fromPlainObject(obj.description),
-      obj.image || 'https://placehold.co/600x400.png',
-      obj.aiHint || 'product package'
+      obj.image || 'https://placehold.co/600x400.png'
     );
   }
 }

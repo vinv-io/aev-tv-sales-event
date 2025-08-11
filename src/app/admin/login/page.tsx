@@ -57,11 +57,6 @@ export default function AdminLoginPage() {
     }
   };
 
-  const handleDemoLogin = () => {
-    setEmail('admin@aquavn.com');
-    setPassword('admin123');
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <Card className="w-full max-w-md shadow-xl">
@@ -82,7 +77,7 @@ export default function AdminLoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@aquavn.com"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
@@ -126,19 +121,6 @@ export default function AdminLoginPage() {
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
-            
-            <div className="text-sm text-center text-gray-600">
-              <p>Demo Account:</p>
-              <Button
-                type="button"
-                variant="link"
-                className="p-0 h-auto text-sm text-blue-600"
-                onClick={handleDemoLogin}
-                disabled={isLoading}
-              >
-                Use Demo Credentials
-              </Button>
-            </div>
           </CardFooter>
         </form>
       </Card>

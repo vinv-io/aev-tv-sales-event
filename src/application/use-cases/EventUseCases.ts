@@ -11,7 +11,6 @@ export interface CreateEventRequest {
   status: boolean;
   description?: { en: string; vi: string };
   image?: string;
-  aiHint?: string;
 }
 
 export interface UpdateEventRequest {
@@ -21,7 +20,6 @@ export interface UpdateEventRequest {
   status?: boolean;
   description?: { en: string; vi: string };
   image?: string;
-  aiHint?: string;
 }
 
 export class GetAllEventsUseCase {
@@ -64,13 +62,12 @@ export class CreateEventUseCase {
 
     // Create domain entities
     const event = new Event(
-      `EVT${Date.now()}`, // Generate ID
+      `EVT${Date.now()}`,
       new LocalizedText(request.name.en, request.name.vi),
       dateRange,
       request.status,
       request.description ? new LocalizedText(request.description.en, request.description.vi) : undefined,
-      request.image,
-      request.aiHint
+      request.image
     );
 
     // Save to repository
@@ -112,10 +109,6 @@ export class UpdateEventUseCase {
     
     if (request.image) {
       updates.image = request.image;
-    }
-    
-    if (request.aiHint) {
-      updates.aiHint = request.aiHint;
     }
 
     // Update event

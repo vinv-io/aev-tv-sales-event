@@ -1,22 +1,23 @@
-# Environment variables for Next.js runtime
-# This file should be named .env.local and placed in the project root
+# PRODUCTION ENVIRONMENT VARIABLES
+# This file is used for production deployment (npm run build, npm start)
+# Ensure all sensitive values are properly configured
 
 # Data source configuration
 DATA_SOURCE=prisma
 
-# Admin authentication credentials
+# Admin authentication credentials (production)
 ADMIN_EMAIL=admin@aqua.io.vn
 ADMIN_PASSWORD=admin123
 
-# JWT secret for admin sessions (change this in production!)
+# JWT secret for admin sessions (CRITICAL: Use strong secret in production!)
 ADMIN_JWT_SECRET=92d8fec0480d3b3e9c428efd137f72e4
 
 # Node environment
-NODE_ENV=productions
+NODE_ENV=production
 
-# Next.js configuration
-NEXT_PUBLIC_APP_URL=http://tv-event-v1.aqua.io.vn
+# Next.js configuration (production)
+NEXT_PUBLIC_APP_URL=https://tv-event-v1.aqua.io.vn
 
-# Optional: If you want to use PostgreSQL
-DATABASE_URL="postgresql://postgres.cogqvqboozicpjljpbhz:srVCeOTyJXRxVNid@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
-DIRECT_URL="postgresql://postgres.cogqvqboozicpjljpbhz:srVCeOTyJXRxVNid@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
+# Connect to Supabase via connection pooling (production)
+DATABASE_URL="postgresql://postgres.gcwaccxqmvnqekgeiryh:fO7WBcNw9mwC82dx@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.gcwaccxqmvnqekgeiryh:fO7WBcNw9mwC82dx@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"

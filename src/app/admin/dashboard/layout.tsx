@@ -19,7 +19,6 @@ import {
   Settings,
   ClipboardList,
   LogOut,
-  UserCog,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -105,17 +104,6 @@ export default function AdminDashboardLayout({
              <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                tooltip={{ children: 'User Management' }}
-              >
-                <Link href="/admin/dashboard/users-mana">
-                  <UserCog />
-                  <span>User Management</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
                 tooltip={{ children: 'Site Settings' }}
               >
                 <Link href="/admin/dashboard/settings">
@@ -152,14 +140,9 @@ export default function AdminDashboardLayout({
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="gap-2">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src="https://placehold.co/100x100.png"
-                      alt="@admin"
-                      data-ai-hint="person portrait"
-                    />
-                    <AvatarFallback>AU</AvatarFallback>
+                    <AvatarFallback>A</AvatarFallback>
                   </Avatar>
-                  <span className="hidden md:inline">Admin User</span>
+                  <span className="hidden md:inline">Admin</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
