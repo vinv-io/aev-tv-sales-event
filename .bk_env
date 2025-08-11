@@ -7,7 +7,7 @@ DATA_SOURCE=prisma
 
 # Admin authentication credentials (production)
 ADMIN_EMAIL=admin@aqua.io.vn
-ADMIN_PASSWORD=admin123
+ADMIN_PASSWORD=admin@?2025
 
 # JWT secret for admin sessions (CRITICAL: Use strong secret in production!)
 ADMIN_JWT_SECRET=92d8fec0480d3b3e9c428efd137f72e4
