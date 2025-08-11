@@ -64,8 +64,8 @@ const nextConfig = {
   env: {
     DATA_SOURCE: process.env.DATA_SOURCE,
   },
-  // Remove standalone output to avoid copy file issues
-  // output: 'standalone',
+  // Enable standalone output for Docker production deployment
+  output: 'standalone',
 };
 
 export default withNextIntl(nextConfig);

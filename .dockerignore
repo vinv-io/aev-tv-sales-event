@@ -17,12 +17,16 @@ npm-debug.log
 
 # Next.js
 .next
-<<<<<<< Updated upstream
-=======
 out/
 
-# Environment variables
-.env*
+# Environment variables - allow only .env.prod and .env.example
+.env
+.env.local
+.env.dev
+.env.development
+.env.test
+.env.production
+!.env.prod
 !.env.example
 
 # IDE
@@ -53,6 +57,3 @@ docs/
 README.md
 *.md
 !package.json
-
-
->>>>>>> Stashed changes

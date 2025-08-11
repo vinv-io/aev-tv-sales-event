@@ -21,12 +21,17 @@ jobs:
         script: |
           cd ~/myapp
 
-          # 1. Sync .env from GitHub secrets
-          cat > .env <<EOL
-          NODE_ENV=${{ secrets.ENV_NODE_ENV }}
-          DATABASE_URL=${{ secrets.ENV_DATABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.ENV_NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.ENV_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # 1. Sync .env.prod from GitHub secrets
+          cat > .env.prod <<EOL
+          # PRODUCTION ENVIRONMENT VARIABLES
+          DATA_SOURCE=prisma
+          ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
+          ADMIN_JWT_SECRET=${{ secrets.ADMIN_JWT_SECRET }}
+          NODE_ENV=production
+          NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          DIRECT_URL=${{ secrets.DIRECT_URL }}
           EOL
 
           # 2. Make sure repo is clean and up to date
@@ -37,8 +42,8 @@ jobs:
           DEPLOY_TAG=$(date +%s)
           docker compose build --no-cache --build-arg TAG=$DEPLOY_TAG
 
-          # 4. Start a temporary container from the new image
-          docker compose run --rm app npx prisma migrate deploy
+          # 4. Run database migrations
+          docker compose run --rm app npx dotenv -e .env.prod -- npx prisma migrate deploy
 
           # 5. Replace running container with new one
           docker compose up -d --no-deps app
