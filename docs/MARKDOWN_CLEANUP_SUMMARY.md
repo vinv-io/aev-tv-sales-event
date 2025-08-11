@@ -11,7 +11,7 @@ Removed the following empty duplicate markdown files from the root directory tha
 - `MIGRATION_SUMMARY.md` (0 bytes) → Kept `docs/MIGRATION_SUMMARY.md` (2,773 bytes)
 - `MOCK_CLEANUP_SUMMARY.md` (0 bytes) → Kept `docs/MOCK_CLEANUP_SUMMARY.md` (3,201 bytes)
 - `PERFORMANCE.md` (0 bytes) → Kept `docs/PERFORMANCE.md` (5,652 bytes)
-- `SQLITE_SETUP.md` (0 bytes) → Kept `docs/SQLITE_SETUP.md` (5,839 bytes)
+
 - `UPGRADE_SUMMARY.md` (0 bytes) → Kept `docs/UPGRADE_SUMMARY.md` (4,002 bytes)
 
 ### Renamed Files
@@ -43,7 +43,7 @@ docs/
 ├── PROJECT_OVERVIEW.md             # Project overview (former docs/README.md)
 ├── PROJECT_STRUCTURE.md            # Current project structure
 ├── reorganization-summary.md       # Folder reorganization completion summary
-├── SQLITE_SETUP.md                 # SQLite database setup guide
+
 ├── tailwind-v4-updates.md          # Tailwind CSS v4 updates
 └── UPGRADE_SUMMARY.md              # Package upgrade summary
 ```

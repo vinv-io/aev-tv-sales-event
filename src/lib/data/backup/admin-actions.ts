@@ -3,50 +3,7 @@ import { hash, compare } from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-// Define permissions enum
-export const PERMISSIONS = {
-  // User Management
-  USER_CREATE: 'user:create',
-  USER_READ: 'user:read',
-  USER_UPDATE: 'user:update',
-  USER_DELETE: 'user:delete',
-  
-  // Role Management
-  ROLE_CREATE: 'role:create',
-  ROLE_READ: 'role:read',
-  ROLE_UPDATE: 'role:update',
-  ROLE_DELETE: 'role:delete',
-  
-  // Event Management
-  EVENT_CREATE: 'event:create',
-  EVENT_READ: 'event:read',
-  EVENT_UPDATE: 'event:update',
-  EVENT_DELETE: 'event:delete',
-  
-  // Product Management
-  PRODUCT_CREATE: 'product:create',
-  PRODUCT_READ: 'product:read',
-  PRODUCT_UPDATE: 'product:update',
-  PRODUCT_DELETE: 'product:delete',
-  
-  // Order Management
-  ORDER_READ: 'order:read',
-  ORDER_UPDATE: 'order:update',
-  ORDER_DELETE: 'order:delete',
-  
-  // Customer Management
-  CUSTOMER_READ: 'customer:read',
-  CUSTOMER_UPDATE: 'customer:update',
-  CUSTOMER_DELETE: 'customer:delete',
-  
-  // Reports & Analytics
-  REPORTS_READ: 'reports:read',
-  ANALYTICS_READ: 'analytics:read',
-  
-  // System Administration
-  SYSTEM_SETTINGS: 'system:settings',
-  DATA_MANAGEMENT: 'data:management',
-} as const;
+// ...existing code...
 
 // Create the default roles and admin user
 export async function initializeAdminSystem() {

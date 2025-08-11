@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -58,6 +59,10 @@ export interface ExtendedUser extends AdminUser {
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+=======
+// This file is deprecated. Use simple-auth.ts for authentication.
+  trustHost: true,
+>>>>>>> Stashed changes
   providers: [
     CredentialsProvider({
       name: 'credentials',

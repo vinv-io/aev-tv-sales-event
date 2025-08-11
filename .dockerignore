@@ -15,3 +15,42 @@ npm-debug.log
 
 # Next.js
 .next
+<<<<<<< Updated upstream
+=======
+out/
+
+# Environment variables
+.env*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Coverage and testing
+coverage/
+.nyc_output
+.coverage
+
+# Build artifacts
+dist/
+build/
+
+# Development files
+docs/
+README.md
+*.md
+!package.json
+
+
+>>>>>>> Stashed changes

@@ -31,7 +31,7 @@
 #### Development Files
 - `add-sample-data.js` (0 bytes)
 - `prisma/seed-new.ts` (0 bytes)
-- `local.db` (0 bytes) - Empty SQLite database file
+
 
 #### Backup Files
 - `src/i18n/request-backup.ts` (17 lines) - Old API version
