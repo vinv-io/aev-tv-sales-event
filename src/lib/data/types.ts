@@ -9,7 +9,6 @@ export type Product = {
     name: LocalizedString | string;
     description: LocalizedString | string;
     image: string;
-    aiHint: string;
 };
 
 export type Event = {
@@ -20,7 +19,6 @@ export type Event = {
     status: boolean;
     description?: LocalizedString | string;
     image?: string;
-    aiHint?: string;
 };
 
 export type Customer = {
@@ -62,8 +60,6 @@ export type LeaderboardEntry = {
     }[];
 };
 
-export type PackageType = 'Simple' | 'Complex';
-
 export type PackageGroup = {
     id: string;
     name: string;
@@ -77,7 +73,6 @@ export type Package = {
     name: LocalizedString | string;
     description: LocalizedString | string;
     image: string;
-    type: PackageType;
     eventId: string;
     eventName?: string;
     discount: number;

@@ -40,7 +40,6 @@ export class ProductService {
       name: JSON.stringify(productData.name),
       description: JSON.stringify(productData.description),
       image: productData.image,
-      aiHint: productData.aiHint,
     };
     
     const result = await prisma.product.create({

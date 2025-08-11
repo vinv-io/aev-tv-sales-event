@@ -8,8 +8,7 @@ export class Event {
     public readonly dateRange: DateRange,
     public readonly status: boolean,
     public readonly description?: LocalizedText,
-    public readonly image?: string,
-    public readonly aiHint?: string
+    public readonly image?: string
   ) {}
 
   public isActive(): boolean {
@@ -26,7 +25,6 @@ export class Event {
     status: boolean;
     description: LocalizedText;
     image: string;
-    aiHint: string;
   }>): Event {
     return new Event(
       this.id,
@@ -34,8 +32,7 @@ export class Event {
       updates.dateRange ?? this.dateRange,
       updates.status ?? this.status,
       updates.description ?? this.description,
-      updates.image ?? this.image,
-      updates.aiHint ?? this.aiHint
+      updates.image ?? this.image
     );
   }
 
@@ -47,8 +44,7 @@ export class Event {
       endDate: this.dateRange.endDate,
       status: this.status,
       description: this.description?.toPlainObject(),
-      image: this.image,
-      aiHint: this.aiHint
+      image: this.image
     };
   }
 }

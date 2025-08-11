@@ -161,8 +161,7 @@ export async function createProductAction(formData: FormData) {
       id: formData.get('id') as string,
       name,
       description,
-      image: formData.get('image') as string || 'https://placehold.co/600x400.png',
-      aiHint: formData.get('aiHint') as string || 'product package'
+      image: formData.get('image') as string || 'https://placehold.co/600x400.png'
     };
 
     const product = await productService.createProduct(productData);
@@ -194,9 +193,6 @@ export async function updateProductAction(id: string, formData: FormData) {
     
     const image = formData.get('image') as string;
     if (image) updateData.image = image;
-    
-    const aiHint = formData.get('aiHint') as string;
-    if (aiHint) updateData.aiHint = aiHint;
 
     const product = await productService.updateProduct(id, updateData);
     return product.toPlainObject();

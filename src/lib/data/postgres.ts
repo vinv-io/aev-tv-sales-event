@@ -15,8 +15,7 @@ export const getEvents = async (): Promise<Event[]> => {
         description: e.description ? JSON.parse(e.description) : undefined,
         startDate: format(new Date(e.startDate), 'dd-MM-yyyy'),
         endDate: format(new Date(e.endDate), 'dd-MM-yyyy'),
-        image: e.image || undefined,
-        aiHint: e.aiHint || undefined
+        image: e.image || undefined
     }));
 };
 
@@ -31,23 +30,47 @@ export const getActiveEvents = async (): Promise<Event[]> => {
         description: e.description ? JSON.parse(e.description) : undefined,
         startDate: format(new Date(e.startDate), 'dd-MM-yyyy'),
         endDate: format(new Date(e.endDate), 'dd-MM-yyyy'),
-        image: e.image || undefined,
-        aiHint: e.aiHint || undefined
+        image: e.image || undefined
     }));
     return active;
 };
 
 export const createEvent = async (eventData: Omit<Event, 'id'>): Promise<Event> => {
+    // Convert date strings to Date objects for Prisma
+    const parseDate = (dateStr: string): Date => {
+        // Handle different date formats
+        if (dateStr.includes('-') && dateStr.length === 10) {
+            // Check if it's YYYY-MM-DD or DD-MM-YYYY
+            const parts = dateStr.split('-');
+            if (parts[0].length === 4) {
+                // YYYY-MM-DD format
+                return new Date(dateStr);
+            } else {
+                // DD-MM-YYYY format, convert to YYYY-MM-DD
+                const [day, month, year] = parts;
+                return new Date(`${year}-${month}-${day}`);
+            }
+        }
+        // Try to parse as-is
+        return new Date(dateStr);
+    };
+
     const newEvent = {
         id: `EVT${Date.now()}`,
         name: JSON.stringify(eventData.name),
-        startDate: eventData.startDate,
-        endDate: eventData.endDate,
+        startDate: parseDate(eventData.startDate as string),
+        endDate: parseDate(eventData.endDate as string),
         status: eventData.status,
         description: eventData.description ? JSON.stringify(eventData.description) : null,
         image: eventData.image || null,
-        aiHint: eventData.aiHint || null,
     };
+    
+    console.log('Creating event with parsed dates:', {
+        ...newEvent,
+        startDate: newEvent.startDate.toISOString(),
+        endDate: newEvent.endDate.toISOString()
+    });
+    
     const result = await prisma.event.create({
         data: newEvent
     });
@@ -58,18 +81,40 @@ export const createEvent = async (eventData: Omit<Event, 'id'>): Promise<Event> 
         startDate: format(new Date(result.startDate), 'dd-MM-yyyy'),
         endDate: format(new Date(result.endDate), 'dd-MM-yyyy'),
         image: result.image || undefined,
-        aiHint: result.aiHint || undefined
     };
 };
 
 export const updateEvent = async (id: string, eventData: Partial<Event>): Promise<Event | undefined> => {
     const updateData: any = { ...eventData };
+    
+    // Handle date string conversion for updates
+    const parseDate = (dateStr: string): Date => {
+        if (dateStr.includes('-') && dateStr.length === 10) {
+            const parts = dateStr.split('-');
+            if (parts[0].length === 4) {
+                return new Date(dateStr);
+            } else {
+                const [day, month, year] = parts;
+                return new Date(`${year}-${month}-${day}`);
+            }
+        }
+        return new Date(dateStr);
+    };
+    
     if (updateData.name) {
         updateData.name = JSON.stringify(updateData.name);
     }
     if (updateData.description) {
         updateData.description = JSON.stringify(updateData.description);
     }
+    if (updateData.startDate && typeof updateData.startDate === 'string') {
+        updateData.startDate = parseDate(updateData.startDate);
+    }
+    if (updateData.endDate && typeof updateData.endDate === 'string') {
+        updateData.endDate = parseDate(updateData.endDate);
+    }
+    
+    console.log('Updating event with data:', updateData);
     
     const result = await prisma.event.update({
         where: { id },
@@ -82,7 +127,6 @@ export const updateEvent = async (id: string, eventData: Partial<Event>): Promis
         startDate: format(new Date(result.startDate), 'dd-MM-yyyy'),
         endDate: format(new Date(result.endDate), 'dd-MM-yyyy'),
         image: result.image || undefined,
-        aiHint: result.aiHint || undefined
     };
 };
 
@@ -102,13 +146,12 @@ export const getProducts = async (): Promise<Product[]> => {
     }));
 };
 
-export const createProduct = async (productData: Omit<Product, 'image' | 'aiHint'> & { image?: string, aiHint?: string }): Promise<Product> => {
+export const createProduct = async (productData: Omit<Product, 'image'> & { image?: string }): Promise<Product> => {
     const newProduct = {
         id: `PROD${Date.now()}`,
         name: JSON.stringify(productData.name),
         description: JSON.stringify(productData.description),
         image: productData.image || 'https://placehold.co/600x400.png',
-        aiHint: productData.aiHint || 'product package',
     };
     const result = await prisma.product.create({
         data: newProduct
@@ -159,19 +202,27 @@ export const findCustomerByPhone = async (phone: string): Promise<Customer | und
     const customer = await prisma.customer.findUnique({
         where: { phone }
     });
-    return customer || undefined;
+    if (!customer) return undefined;
+    
+    return {
+        ...customer,
+        joined: format(customer.joined, 'dd-MM-yyyy')
+    };
 };
 
 export const createCustomer = async (customerData: Omit<Customer, 'id' | 'joined'>): Promise<Customer> => {
     const newCustomer = {
         id: `CUST${Date.now()}`,
-        joined: format(new Date(), 'dd-MM-yyyy'),
+        joined: new Date(),
         ...customerData,
     };
     const result = await prisma.customer.create({
         data: newCustomer
     });
-    return result;
+    return {
+        ...result,
+        joined: format(result.joined, 'dd-MM-yyyy')
+    };
 };
 
 export const updateCustomer = async (id: string, customerData: Partial<Customer>): Promise<Customer | undefined> => {
@@ -179,7 +230,10 @@ export const updateCustomer = async (id: string, customerData: Partial<Customer>
         where: { id },
         data: customerData
     });
-    return result;
+    return {
+        ...result,
+        joined: format(result.joined, 'dd-MM-yyyy')
+    };
 };
 
 export const deleteCustomer = async (id: string): Promise<void> => {
@@ -215,7 +269,7 @@ export const getOrders = async (): Promise<Order[]> => {
 export const createOrder = async (orderData: Omit<Order, 'orderId' | 'orderDate'>): Promise<Order> => {
     const newOrder = {
         orderId: `ORD${Date.now()}`,
-        orderDate: format(new Date(), 'dd-MM-yyyy'),
+        orderDate: new Date(),
         ...orderData,
         products: JSON.stringify(orderData.products),
     };
@@ -224,7 +278,8 @@ export const createOrder = async (orderData: Omit<Order, 'orderId' | 'orderDate'
     });
     return {
         ...result,
-        products: JSON.parse(result.products as string)
+        orderDate: format(result.orderDate, 'dd-MM-yyyy'),
+        products: JSON.parse(result.products)
     };
 };
 
@@ -247,9 +302,23 @@ export const createCheckIn = async (checkInData: { customerId: string, shopName:
                 eventId: checkInData.eventId,
             }
         });
-    } catch (error) {
-        // Handle unique constraint violation (duplicate check-in)
-        console.log('Check-in already exists for this customer and event');
+        console.log('✅ Check-in created successfully for customer:', checkInData.customerId);
+    } catch (error: any) {
+        console.error('❌ Check-in creation failed:', error);
+        
+        // Handle specific Prisma errors
+        if (error.code === 'P2002') {
+            // Unique constraint violation - customer already checked in for this event
+            throw new Error('Bạn đã check-in cho sự kiện này rồi. Mỗi khách hàng chỉ có thể check-in một lần cho mỗi sự kiện.');
+        }
+        
+        if (error.code === 'P2003') {
+            // Foreign key constraint violation
+            throw new Error('Dữ liệu không hợp lệ. Vui lòng kiểm tra lại thông tin sự kiện và khách hàng.');
+        }
+        
+        // Re-throw other errors instead of swallowing them
+        throw new Error('Có lỗi xảy ra khi check-in. Vui lòng thử lại sau.');
     }
 };
 

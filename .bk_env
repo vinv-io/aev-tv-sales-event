@@ -1,0 +1,23 @@
+# PRODUCTION ENVIRONMENT VARIABLES
+# This file is used for production deployment (npm run build, npm start)
+# Ensure all sensitive values are properly configured
+
+# Data source configuration
+DATA_SOURCE=prisma
+
+# Admin authentication credentials (production)
+ADMIN_EMAIL=admin@aqua.io.vn
+ADMIN_PASSWORD=admin123
+
+# JWT secret for admin sessions (CRITICAL: Use strong secret in production!)
+ADMIN_JWT_SECRET=92d8fec0480d3b3e9c428efd137f72e4
+
+# Node environment
+NODE_ENV=production
+
+# Next.js configuration (production)
+NEXT_PUBLIC_APP_URL=https://tv-event-v1.aqua.io.vn
+
+# Connect to Supabase via connection pooling (production)
+DATABASE_URL="postgresql://postgres.gcwaccxqmvnqekgeiryh:fO7WBcNw9mwC82dx@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.gcwaccxqmvnqekgeiryh:fO7WBcNw9mwC82dx@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"

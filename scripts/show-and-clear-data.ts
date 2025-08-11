@@ -4,7 +4,7 @@
  * Show Database Status and Clear Data Script
  * 
  * This script first shows the current state of the database,
- * then clears all business data while preserving admin users.
+ * then clears all business data. Simple auth via environment variables.
  */
 
 import { PrismaClient } from '@prisma/client';
@@ -21,10 +21,7 @@ async function showDatabaseStatus() {
     const customers = await prisma.customer.count();
     const orders = await prisma.order.count();
     const checkIns = await prisma.checkIn.count();
-    const adminUsers = await prisma.adminUser.count();
-    const adminRoles = await prisma.adminRole.count();
-    const accounts = await prisma.account.count();
-    const sessions = await prisma.session.count();
+    // Admin tables removed - using simple auth
     
     console.log('📋 Business Data:');
     console.log(`   Events: ${events}`);
@@ -33,16 +30,12 @@ async function showDatabaseStatus() {
     console.log(`   Orders: ${orders}`);
     console.log(`   Check-ins: ${checkIns}`);
     console.log('');
-    console.log('🔐 Admin Data (will be preserved):');
-    console.log(`   Admin Users: ${adminUsers}`);
-    console.log(`   Admin Roles: ${adminRoles}`);
-    console.log(`   Auth Accounts: ${accounts}`);
-    console.log(`   Active Sessions: ${sessions}`);
+    console.log('🔐 Simple admin auth configured via environment variables');
     console.log('');
     
     return {
       business: { events, products, customers, orders, checkIns },
-      admin: { adminUsers, adminRoles, accounts, sessions }
+      admin: { authType: 'simple-env-based' }
     };
   } catch (error) {
     console.error('❌ Error reading database status:', error);
@@ -60,7 +53,7 @@ async function clearBusinessDataWithConfirmation() {
     return;
   }
   
-  console.log(`⚠️  About to clear ${totalBusinessRecords} business records while preserving ${status.admin.adminUsers} admin users.`);
+  console.log(`⚠️  About to clear ${totalBusinessRecords} business records.`);
   console.log('');
   
   // Proceed with clearing

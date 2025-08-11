@@ -22,8 +22,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       id: product.id,
       name: product.name.toPlainObject(),
       description: product.description.toPlainObject(),
-      image: product.image,
-      aiHint: product.aiHint
+      image: product.image
     };
     
     const createdData = await database.createProduct(productData);
@@ -35,8 +34,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       id: product.id,
       name: product.name.toPlainObject(),
       description: product.description.toPlainObject(),
-      image: product.image,
-      aiHint: product.aiHint
+      image: product.image
     };
     
     const updatedData = await database.updateProduct(id, updateData);
@@ -59,8 +57,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       data.id,
       name,
       description,
-      data.image,
-      data.aiHint || 'product package'
+      data.image
     );
   }
 }

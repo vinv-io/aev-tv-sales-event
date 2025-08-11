@@ -9,7 +9,6 @@ export class UpdateProductUseCase {
     name: { en: string; vi: string };
     description: { en: string; vi: string };
     image: string;
-    aiHint: string;
   }>): Promise<Product> {
     const existingProduct = await this.productRepository.getById(id);
     if (!existingProduct) {
@@ -28,10 +27,6 @@ export class UpdateProductUseCase {
     
     if (updateData.image) {
       updates.image = updateData.image;
-    }
-    
-    if (updateData.aiHint) {
-      updates.aiHint = updateData.aiHint;
     }
 
     const updatedProduct = existingProduct.update(updates);

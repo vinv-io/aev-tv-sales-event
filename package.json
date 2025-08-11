@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
-    "build": "next build",
-    "start": "next start",
+    "dev": "npx dotenv -e .env.dev -- next dev -p 3000",
+    "build": "npx dotenv -e .env.prod -- next build",
+    "start": "npx dotenv -e .env.prod -- next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "tailwind:check": "tailwindcss --check-config",
@@ -19,7 +19,6 @@
     "db:status": "tsx scripts/show-status.ts"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^2.10.0",
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^6.13.0",
     "@radix-ui/react-accordion": "^1.2.0",
@@ -51,10 +50,10 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.1.7",
+    "jose": "^6.0.12",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.417.0",
     "next": "^14.2.15",
-    "next-auth": "^5.0.0-beta.29",
     "next-intl": "^3.22.2",
     "pg": "^8.16.3",
     "react": "^18.3.1",
@@ -76,15 +75,14 @@
     "@types/recharts": "^1.8.29",
     "@types/xlsx": "^0.0.36",
     "autoprefixer": "^10.4.19",
+    "dotenv-cli": "^10.0.0",
     "eslint": "8.57.1",
     "eslint-config-next": "15.4.6",
     "postcss": "^8",
     "prisma": "^6.13.0",
+    "seed": "npx tsx prisma/seed.ts",
     "tailwindcss": "^3.4.15",
     "tsx": "^4.20.3",
     "typescript": "^5.9.2"
-  },
-  "prisma": {
-    "seed": "npx tsx prisma/seed.ts"
   }
 }

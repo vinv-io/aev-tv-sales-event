@@ -17,6 +17,8 @@ npm-debug.log
 
 # Next.js
 .next
+<<<<<<< Updated upstream
+=======
 out/
 
 # Environment variables
@@ -52,8 +54,5 @@ README.md
 *.md
 !package.json
 
-# Database files (for SQLite)
-*.db
-*.sqlite
-*.sqlite3
-prisma/dev.db
+
+>>>>>>> Stashed changes
