@@ -2,6 +2,7 @@
 'use client';
 
 import { Logo } from "../icons/Logo";
+import { LanguageSwitcher } from '@/components/navigation/LanguageSwitcher';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { memo } from 'react';
@@ -147,26 +148,36 @@ export const Footer = memo(() => {
             <p>
               © {currentYear} AQUA VN. {t('allRightsReserved', { default: 'All rights reserved.' })}
             </p>
-            <nav role="navigation" aria-label="Legal navigation">
-              <ul className="flex gap-4">
-                <li>
-                  <Link
-                    href="/privacy"
-                    className="hover:text-primary transition-colors duration-200 focus:text-primary outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-1 py-0.5"
-                  >
-                    {t('privacy', { default: 'Privacy Policy' })}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/terms"
-                    className="hover:text-primary transition-colors duration-200 focus:text-primary outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-1 py-0.5"
-                  >
-                    {t('terms', { default: 'Terms of Service' })}
-                  </Link>
-                </li>
-              </ul>
-            </nav>
+            
+            <div className="flex items-center gap-4">
+              {/* Language Switcher */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-medium">{t('language', { default: 'Language' })}:</span>
+                <LanguageSwitcher />
+              </div>
+              
+              {/* Legal Navigation */}
+              <nav role="navigation" aria-label="Legal navigation">
+                <ul className="flex gap-4">
+                  <li>
+                    <Link
+                      href="/privacy"
+                      className="hover:text-primary transition-colors duration-200 focus:text-primary outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-1 py-0.5"
+                    >
+                      {t('privacy', { default: 'Privacy Policy' })}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/terms"
+                      className="hover:text-primary transition-colors duration-200 focus:text-primary outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-1 py-0.5"
+                    >
+                      {t('terms', { default: 'Terms of Service' })}
+                    </Link>
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
       </div>

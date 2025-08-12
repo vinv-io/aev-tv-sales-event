@@ -12,6 +12,76 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Check Environment Variables
+      run: |
+        echo "Checking required environment variables and secrets..."
+        
+        # Check if secrets are set (without exposing values)
+        if [ -z "${{ secrets.VPS_HOST }}" ]; then
+          echo "❌ VPS_HOST secret is not set"
+          exit 1
+        else
+          echo "✅ VPS_HOST is set"
+        fi
+        
+        if [ -z "${{ secrets.VPS_USER }}" ]; then
+          echo "❌ VPS_USER secret is not set"
+          exit 1
+        else
+          echo "✅ VPS_USER is set"
+        fi
+        
+        if [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then
+          echo "❌ VPS_SSH_KEY secret is not set"
+          exit 1
+        else
+          echo "✅ VPS_SSH_KEY is set"
+        fi
+        
+        if [ -z "${{ secrets.ADMIN_EMAIL }}" ]; then
+          echo "❌ ADMIN_EMAIL secret is not set"
+          exit 1
+        else
+          echo "✅ ADMIN_EMAIL is set"
+        fi
+        
+        if [ -z "${{ secrets.ADMIN_PASSWORD }}" ]; then
+          echo "❌ ADMIN_PASSWORD secret is not set"
+          exit 1
+        else
+          echo "✅ ADMIN_PASSWORD is set"
+        fi
+        
+        if [ -z "${{ secrets.ADMIN_JWT_SECRET }}" ]; then
+          echo "❌ ADMIN_JWT_SECRET secret is not set"
+          exit 1
+        else
+          echo "✅ ADMIN_JWT_SECRET is set"
+        fi
+        
+        if [ -z "${{ secrets.NEXT_PUBLIC_APP_URL }}" ]; then
+          echo "❌ NEXT_PUBLIC_APP_URL secret is not set"
+          exit 1
+        else
+          echo "✅ NEXT_PUBLIC_APP_URL is set"
+        fi
+        
+        if [ -z "${{ secrets.DATABASE_URL }}" ]; then
+          echo "❌ DATABASE_URL secret is not set"
+          exit 1
+        else
+          echo "✅ DATABASE_URL is set"
+        fi
+        
+        if [ -z "${{ secrets.DIRECT_URL }}" ]; then
+          echo "❌ DIRECT_URL secret is not set"
+          exit 1
+        else
+          echo "✅ DIRECT_URL is set"
+        fi
+        
+        echo "✅ All required secrets are configured"
+
     - name: Deploy over SSH
       uses: appleboy/ssh-action@master
       with:
@@ -34,19 +104,52 @@ jobs:
           DIRECT_URL=${{ secrets.DIRECT_URL }}
           EOL
 
-          # 2. Make sure repo is clean and up to date
+          # 2. Check remote environment
+          echo "🔍 Checking remote environment..."
+          
+          # Check if required directories exist
+          if [ ! -d ~/myapp ]; then
+            echo "❌ Application directory ~/myapp does not exist"
+            exit 1
+          fi
+          echo "✅ Application directory exists"
+          
+          # Check if Docker is available
+          if ! command -v docker &> /dev/null; then
+            echo "❌ Docker is not installed or not accessible"
+            exit 1
+          fi
+          echo "✅ Docker is available"
+          
+          # Check if Docker Compose is available
+          if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
+            echo "❌ Docker Compose is not installed or not accessible"
+            exit 1
+          fi
+          echo "✅ Docker Compose is available"
+          
+          # Check disk space (require at least 1GB free)
+          AVAILABLE_SPACE=$(df ~/myapp | tail -1 | awk '{print $4}')
+          if [ "$AVAILABLE_SPACE" -lt 1048576 ]; then
+            echo "❌ Insufficient disk space (less than 1GB available)"
+            df -h ~/myapp
+            exit 1
+          fi
+          echo "✅ Sufficient disk space available"
+
+          # 3. Make sure repo is clean and up to date
           git fetch origin main
           git reset --hard origin/main
 
-          # 3. Build image with a unique tag (avoids downtime during build)
+          # 4. Build image with a unique tag (avoids downtime during build)
           DEPLOY_TAG=$(date +%s)
           docker compose build --no-cache --build-arg TAG=$DEPLOY_TAG
 
-          # 4. Run database migrations
+          # 5. Run database migrations
           docker compose run --rm app npx dotenv -e .env.prod -- npx prisma migrate deploy
 
-          # 5. Replace running container with new one
+          # 6. Replace running container with new one
           docker compose up -d --no-deps app
 
-          # 6. Cleanup old images
+          # 7. Cleanup old images
           docker image prune -af

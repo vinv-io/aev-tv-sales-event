@@ -2,7 +2,6 @@
 'use client';
 
 import { Logo } from '@/components/icons/Logo';
-import { LanguageSwitcher } from '@/components/navigation/LanguageSwitcher';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/utils';
@@ -154,7 +153,6 @@ export const Header = memo(() => {
         {/* Right side actions */}
         <div className="flex items-center gap-2 md:gap-4">
           <CustomerInfo customerInfo={customerInfo} />
-          <LanguageSwitcher />
           <CartButton totalQuantity={cartItemCount} />
           
           {isCustomerLoggedIn && (

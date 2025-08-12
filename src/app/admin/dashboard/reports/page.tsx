@@ -1,8 +1,11 @@
 
 'use client';
 
+// Disable static generation for this client-side page
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react';
-import * as XLSX from 'xlsx';
+import { stringify } from 'csv-stringify/browser/esm';
 import {
   Card,
   CardContent,
@@ -118,17 +121,17 @@ export default function ReportsPage() {
     const event = events.find(e => e.id === selectedEvent);
     const eventName = event ? (typeof event.name === 'string' ? event.name : event.name.en) : 'report';
     
-    // Create worksheets
-    const checkinWsData = filteredCheckins.map(c => ({
+    // Prepare check-in data
+    const checkinCsvData = filteredCheckins.map(c => ({
         "Customer ID": c.customerId,
         "Shop Name": c.shopName,
         "Phone": c.phone,
         "Event ID": c.eventId,
         "Check-in Time": c.checkInTime
     }));
-    const checkinWs = XLSX.utils.json_to_sheet(checkinWsData);
     
-    const flattenedOrders = filteredOrders.flatMap(order => 
+    // Prepare orders data
+    const ordersCsvData = filteredOrders.flatMap(order => 
         order.products.map(product => ({
             'Order ID': order.orderId,
             'Shop Name': order.shopName,
@@ -138,17 +141,31 @@ export default function ReportsPage() {
             'Order Date': order.orderDate,
         }))
     );
-    const orderWs = XLSX.utils.json_to_sheet(flattenedOrders);
 
-    // Create a new workbook
-    const wb = XLSX.utils.book_new();
+    // Helper function to download CSV
+    const downloadCsv = (data: any[], filename: string) => {
+      stringify(data, { header: true }, (err, output) => {
+        if (err) {
+          console.error('Error generating CSV:', err);
+          return;
+        }
+        
+        const blob = new Blob([output], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    };
 
-    // Append worksheets to the workbook
-    XLSX.utils.book_append_sheet(wb, checkinWs, "Check-ins");
-    XLSX.utils.book_append_sheet(wb, orderWs, "Sale Orders");
-
-    // Write the workbook and trigger a download
-    XLSX.writeFile(wb, `${eventName.replace(/ /g, '_')}_report.xlsx`);
+    // Download both CSV files
+    const safeEventName = eventName.replace(/ /g, '_');
+    downloadCsv(checkinCsvData, `${safeEventName}_checkins.csv`);
+    downloadCsv(ordersCsvData, `${safeEventName}_orders.csv`);
   };
 
   const sortedEventsForDropdown = [...events].sort((a,b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());

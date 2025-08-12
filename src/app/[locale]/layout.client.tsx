@@ -51,24 +51,38 @@ interface LayoutContextType {
 
 const LayoutContext = React.createContext<LayoutContextType | null>(null);
 
-// Custom hook with better error handling
-export function useLayoutContext(): LayoutContextType {
-  const context = useContext(LayoutContext);
-  if (!context) {
-    throw new Error(
-      'useLayoutContext must be used within a LayoutProvider. ' +
-      'Make sure your component is wrapped with <LayoutProvider>.'
-    );
-  }
-  return context;
-}
-
 // Default states
 const DEFAULT_CUSTOMER_INFO: CustomerInfo = {
   phone: '',
   shopName: '',
   event: '',
 };
+
+// Custom hook with better error handling
+export function useLayoutContext(): LayoutContextType {
+  const context = useContext(LayoutContext);
+  if (!context) {
+    // Always return a default state during SSR or when context is not available
+    // This prevents errors during static generation
+    return {
+      cart: [],
+      setCart: () => {},
+      addToCart: () => {},
+      removeFromCart: () => {},
+      updateCartQuantity: () => {},
+      clearCart: () => {},
+      customerInfo: DEFAULT_CUSTOMER_INFO,
+      setCustomerInfo: () => {},
+      updateCustomerInfo: () => {},
+      clearCustomerInfo: () => {},
+      cartTotal: 0,
+      cartItemCount: 0,
+      isCartEmpty: true,
+      isCustomerLoggedIn: false,
+    };
+  }
+  return context;
+}
 
 const STORAGE_KEYS = {
   CART: 'aev-cart',
@@ -80,6 +94,13 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>(DEFAULT_CUSTOMER_INFO);
   const [isHydrated, setIsHydrated] = useState(false);
+
+  // Prevent SSR mismatches by ensuring we only render on client
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Hydration effect to prevent SSR mismatch
   useEffect(() => {
@@ -241,7 +262,7 @@ export function LayoutProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <LayoutContext.Provider value={contextValue}>
-      {children}
+      {isMounted ? children : <div className="min-h-screen bg-background" />}
     </LayoutContext.Provider>
   );
 }

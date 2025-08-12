@@ -1,6 +1,9 @@
 
 'use client';
 
+// Disable static generation for this client-side page
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";

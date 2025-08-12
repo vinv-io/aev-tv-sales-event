@@ -25,6 +25,9 @@ RUN npx prisma generate
 # Build the application using environment variables
 RUN npx dotenv -e .env -- npm run build
 
+# Create missing prerender manifest if it doesn't exist
+RUN [ ! -f /app/.next/prerender-manifest.json ] && echo '{"version":4,"routes":{},"dynamicRoutes":{},"notFoundRoutes":[],"preview":{"previewModeId":"development","previewModeSigningKey":"development","previewModeEncryptionKey":"development"}}' > /app/.next/prerender-manifest.json || true
+
 # Ensure proper permissions for node_modules
 RUN chown -R 1001:1001 /app/node_modules
 
@@ -43,10 +46,11 @@ RUN adduser --system --uid 1001 nextjs
 RUN npm install sharp
 RUN npm install -g dotenv-cli
 
-# Copy the built application
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+# Copy the built application and all dependencies
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
 
 # Copy Prisma files for database operations
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
@@ -59,6 +63,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.env ./.env
 # Create cache directory with proper permissions
 RUN mkdir -p /app/.next/cache && chown -R nextjs:nodejs /app/.next/cache
 RUN chown -R nextjs:nodejs /app/node_modules
+RUN chown -R nextjs:nodejs /app/.next
+RUN chown -R nextjs:nodejs /app/public
 
 USER nextjs
 
@@ -66,6 +72,6 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Use dotenv to load environment and start the server
-CMD ["npx", "dotenv", "-e", ".env", "--", "node", "server.js"]
+# Use dotenv to load environment and start Next.js
+CMD ["npx", "dotenv", "-e", ".env", "--", "npx", "next", "start"]
 

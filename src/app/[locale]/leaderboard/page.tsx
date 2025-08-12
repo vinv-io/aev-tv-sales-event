@@ -1,6 +1,9 @@
 
 'use client';
 
+// Disable static generation for this client-side page
+export const dynamic = 'force-dynamic'
+
 import React, { useEffect, useState } from 'react';
 import { useLayoutContext } from '../layout.client';
 import {

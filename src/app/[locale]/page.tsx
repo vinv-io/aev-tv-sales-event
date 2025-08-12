@@ -1,5 +1,8 @@
 'use client';
 
+// Disable static generation for this client-side page
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect, useCallback, memo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
