@@ -10,6 +10,16 @@ This directory contains scripts for managing the database data, specifically for
 # Show current database status
 npm run db:status
 
+# Quick clear (minimal output)
+npm run db:clear
+
+# Detailed clear with confirmation
+npm run db:clear-detailed
+
+# Comprehensive clear with full logging
+npm run db:clear-all
+npm run db:status
+
 # Quick clear all business data (preserves admin users)
 npm run db:clear
 
