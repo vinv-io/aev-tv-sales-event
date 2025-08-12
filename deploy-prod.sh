@@ -5,10 +5,10 @@
 
 echo "🚀 Starting production deployment..."
 
-# Check if .env.prod exists
-if [ ! -f ".env.prod" ]; then
-    echo "❌ Error: .env.prod file not found!"
-    echo "Please create .env.prod with your production environment variables."
+# Check if .env exists
+if [ ! -f ".env" ]; then
+    echo "❌ Error: .env file not found!"
+    echo "Please create .env with your production environment variables."
     exit 1
 fi
 
@@ -27,7 +27,7 @@ echo "✅ Docker image built successfully"
 
 # Run database migrations
 echo "📊 Running database migrations..."
-docker compose run --rm app npx dotenv -e .env.prod -- npx prisma migrate deploy
+docker compose run --rm app npx prisma migrate deploy
 
 if [ $? -ne 0 ]; then
     echo "⚠️  Database migration warning - continuing deployment"

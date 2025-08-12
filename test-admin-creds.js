@@ -2,8 +2,8 @@
 async function testAdminCredentials() {
   console.log('🔐 Testing admin credentials...\n');
   
-  // Load environment variables
-  require('dotenv').config({ path: '.env.dev' });
+  // Load environment variables from .env file
+  require('dotenv').config({ path: '.env' });
   
   const adminEmail = process.env.ADMIN_EMAIL;
   const adminPassword = process.env.ADMIN_PASSWORD;

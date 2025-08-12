@@ -1,4 +1,7 @@
-# Production Deployment Script for AEV TV Sales Event (PowerShell)
+# Pro# Check if .env exists
+if (-not (Test-Path ".env")) {
+    Write-Host "❌ Error: .env file not found!" -ForegroundColor Red
+    Write-Host "Please create .env with your production environment variables." -ForegroundColor Yellowion Deployment Script for AEV TV Sales Event (PowerShell)
 # This script builds and deploys the application using Docker
 
 Write-Host "🚀 Starting production deployment..." -ForegroundColor Green
@@ -25,7 +28,7 @@ Write-Host "✅ Docker image built successfully" -ForegroundColor Green
 
 # Run database migrations
 Write-Host "📊 Running database migrations..." -ForegroundColor Blue
-docker compose run --rm app npx dotenv -e .env.prod -- npx prisma migrate deploy
+docker compose run --rm app npx prisma migrate deploy
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "⚠️  Database migration warning - continuing deployment" -ForegroundColor Yellow

@@ -23,7 +23,7 @@ COPY .env .env
 RUN npx prisma generate
 
 # Build the application using environment variables
-RUN npx dotenv -e .env -- npm run build
+RUN npm run build
 
 # Create missing prerender manifest if it doesn't exist
 RUN [ ! -f /app/.next/prerender-manifest.json ] && echo '{"version":4,"routes":{},"dynamicRoutes":{},"notFoundRoutes":[],"preview":{"previewModeId":"development","previewModeSigningKey":"development","previewModeEncryptionKey":"development"}}' > /app/.next/prerender-manifest.json || true
@@ -42,9 +42,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Install sharp for image optimization and dotenv-cli for environment handling
+# Install sharp for image optimization
 RUN npm install sharp
-RUN npm install -g dotenv-cli
 
 # Copy the built application and all dependencies
 COPY --from=builder /app/.next ./.next
@@ -72,6 +71,6 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Use dotenv to load environment and start Next.js
-CMD ["npx", "dotenv", "-e", ".env", "--", "npx", "next", "start"]
+# Start Next.js server
+CMD ["npx", "next", "start"]
 

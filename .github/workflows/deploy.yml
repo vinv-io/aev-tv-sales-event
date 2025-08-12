@@ -91,8 +91,8 @@ jobs:
         script: |
           cd ~/myapp
 
-          # 1. Sync .env.prod from GitHub secrets
-          cat > .env.prod <<EOL
+          # 1. Sync .env from GitHub secrets
+          cat > .env <<EOL
           # PRODUCTION ENVIRONMENT VARIABLES
           DATA_SOURCE=prisma
           ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
@@ -146,7 +146,7 @@ jobs:
           docker compose build --no-cache --build-arg TAG=$DEPLOY_TAG
 
           # 5. Run database migrations
-          docker compose run --rm app npx dotenv -e .env.prod -- npx prisma migrate deploy
+          docker compose run --rm app npx prisma migrate deploy
 
           # 6. Replace running container with new one
           docker compose up -d --no-deps app

@@ -4,35 +4,63 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
-  // Remove standalone for now, use regular build
-  // output: 'standalone', // Required for Docker builds
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Custom webpack configuration to handle error pages
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Ignore problematic error pages during build
-    if (!dev && !isServer) {
-      config.plugins.push(
-        new webpack.IgnorePlugin({
-          resourceRegExp: /^\.\/404$/,
-          contextRegExp: /pages$/,
-        }),
-        new webpack.IgnorePlugin({
-          resourceRegExp: /^\.\/500$/,
-          contextRegExp: /pages$/,
-        })
-      );
-    }
-    return config;
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+    ];
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'aquavietnam.com.vn',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
+      }
+    ],
+  },
+  env: {
+    DATA_SOURCE: process.env.DATA_SOURCE,
+  },
+  // Enable standalone output for Docker production deployment
+  output: 'standalone',
   async headers() {
     return [
       {
