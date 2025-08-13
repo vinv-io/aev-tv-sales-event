@@ -39,6 +39,7 @@ const nextConfig = {
     ];
   },
   images: {
+    domains: ['placehold.co', 'aquavietnam.com.vn', 'images.unsplash.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -61,9 +62,9 @@ const nextConfig = {
     ],
     // Add additional configuration for production
     dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    // Disable image optimization in standalone mode if needed
-    unoptimized: process.env.NODE_ENV === 'production' && process.env.NEXT_DEPLOYMENT === 'standalone',
+    // contentSecurityPolicy: "default-src 'self' data: https:; img-src 'self' data: https: http:; script-src 'none'; sandbox;",
+    // Temporarily disable image optimization to test
+    unoptimized: true,
   },
   env: {
     DATA_SOURCE: process.env.DATA_SOURCE,

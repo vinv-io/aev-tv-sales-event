@@ -242,7 +242,13 @@ export default function OrderPage() {
                 <Card key={product.id} className="flex flex-col">
                   <CardHeader>
                     <div className="relative w-full h-48 rounded-t-lg overflow-hidden">
-                      <Image src={product.image} alt={productName} layout="fill" objectFit="cover" />
+                      <Image 
+                        src={product.image} 
+                        alt={productName} 
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
                     </div>
                     <CardTitle className="pt-4">{productName}</CardTitle>
                     <CardDescription>{productDescription}</CardDescription>
