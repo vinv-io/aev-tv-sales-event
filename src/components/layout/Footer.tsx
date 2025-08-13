@@ -6,7 +6,7 @@ import { LanguageSwitcher } from '@/components/navigation/LanguageSwitcher';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { memo } from 'react';
-import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Mail, Phone, MapPin, YoutubeIcon, Youtube } from 'lucide-react';
 import { Button } from '../ui/button';
 
 // Types for better structure
@@ -31,9 +31,9 @@ const QUICK_LINKS: QuickLink[] = [
 ] as const;
 
 const SOCIAL_LINKS: SocialLink[] = [
-  { href: 'https://facebook.com/aquavn', icon: Facebook, label: 'Facebook' },
-  { href: 'https://twitter.com/aquavn', icon: Twitter, label: 'Twitter' },
-  { href: 'https://instagram.com/aquavn', icon: Instagram, label: 'Instagram' },
+  { href: 'https://www.facebook.com/aquavietnam', icon: Facebook, label: 'Facebook' },
+  { href: 'https://www.youtube.com/c/AquavietnamVn2014', icon: Youtube, label: 'Youtube' },
+  { href: 'https://www.instagram.com/aquavietnam.vn/', icon: Instagram, label: 'Instagram' },
 ] as const;
 
 // Memoized sub-components
@@ -161,18 +161,24 @@ export const Footer = memo(() => {
                 <ul className="flex gap-4">
                   <li>
                     <Link
-                      href="/privacy"
+                      href="https://aquavietnam.com.vn/chinh-sach-bao-mat-thong-tin/"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="hover:text-primary transition-colors duration-200 focus:text-primary outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-1 py-0.5"
                     >
                       {t('privacy', { default: 'Privacy Policy' })}
+                      <span className="sr-only"> (opens in new tab)</span>
                     </Link>
                   </li>
                   <li>
                     <Link
-                      href="/terms"
+                      href="https://aquavietnam.com.vn/dieu-kien-dieu-khoan/"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="hover:text-primary transition-colors duration-200 focus:text-primary outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm px-1 py-0.5"
                     >
                       {t('terms', { default: 'Terms of Service' })}
+                      <span className="sr-only"> (opens in new tab)</span>
                     </Link>
                   </li>
                 </ul>
