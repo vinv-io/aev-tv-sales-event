@@ -38,7 +38,7 @@
     "phoneTitle": "Phone number must be 10 digits",
     "shopLabel": "Shop Name",
     "shopPlaceholder": "Enter your shop name",
-    "buttonText": "Proceed to Order",
+    "buttonText": "Check in",
     "requiredField": "Please fill out this field.",
     "errorTitle": "Validation Error",
     "errorEvent": "Please select an event.",
@@ -49,11 +49,10 @@
     "checkinErrorDesc": "There was an error checking in. Please try again."
   },
   "order": {
-    "title": "Available Products",
     "orderSummary": "Order Summary",
     "total": "Total Quantity",
     "emptyCart": "Your cart is empty.",
-    "checkout": "Checkout",
+    "checkout": "Place Order",
     "addToOrder": "Add to Order",
     "searchPlaceholder": "Search products...",
     "shopName": "Shop Name",

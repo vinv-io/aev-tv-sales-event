@@ -24,8 +24,6 @@ interface SocialLink {
 
 // Constants
 const QUICK_LINKS: QuickLink[] = [
-  { href: '/leaderboard', label: 'leaderboard' },
-  { href: '/leaderboard2', label: 'leaderboard2' },
   { href: '/order', label: 'order' },
   { href: '/admin/login', label: 'admin', external: true },
 ] as const;

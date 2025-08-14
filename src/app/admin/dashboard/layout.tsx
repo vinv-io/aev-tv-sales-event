@@ -19,6 +19,7 @@ import {
   Settings,
   ClipboardList,
   LogOut,
+  Trophy,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -99,6 +100,28 @@ export default function AdminDashboardLayout({
                   <ClipboardList />
                   <span>Reports</span>
                 </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={{ children: 'Leaderboard' }}
+              >
+                <a href="/leaderboard" target="_blank" rel="noopener noreferrer">
+                  <Trophy />
+                  <span>Leaderboard</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={{ children: 'Leaderboard 2' }}
+              >
+                <a href="/leaderboard2" target="_blank" rel="noopener noreferrer">
+                  <Trophy />
+                  <span>Leaderboard 2</span>
+                </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>

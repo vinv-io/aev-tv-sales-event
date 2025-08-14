@@ -31,11 +31,10 @@ export default function OrderPage() {
 
   const content = {
     vi: {
-      title: 'Sản phẩm có sẵn',
       orderSummary: 'Tóm tắt đơn hàng',
       total: 'Tổng số lượng',
       emptyCart: 'Giỏ hàng của bạn đang trống.',
-      checkout: 'Thanh toán',
+      checkout: 'Đặt hàng',
       addToOrder: 'Thêm vào giỏ',
       searchPlaceholder: 'Tìm kiếm sản phẩm...',
       shopName: 'Tên cửa hàng',
@@ -52,11 +51,10 @@ export default function OrderPage() {
       noProductsAvailable: 'Không có sản phẩm nào khả dụng.',
     },
     en: {
-      title: 'Available Products',
       orderSummary: 'Order Summary',
       total: 'Total Quantity',
       emptyCart: 'Your cart is empty.',
-      checkout: 'Checkout',
+      checkout: 'Place Order',
       addToOrder: 'Add to Order',
       searchPlaceholder: 'Search products...',
       shopName: 'Shop Name',
@@ -190,7 +188,6 @@ export default function OrderPage() {
                         <Button variant="outline" size="icon" onClick={() => router.back()}>
                             <ChevronLeft className="h-4 w-4" />
                         </Button>
-                        <CardTitle className="text-2xl font-headline">{currentContent.title}</CardTitle>
                     </div>
                     <div className="relative w-full max-w-xs">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />

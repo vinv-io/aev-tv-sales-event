@@ -38,7 +38,7 @@
     "phoneTitle": "Số điện thoại phải có 10 chữ số",
     "shopLabel": "Tên cửa hàng",
     "shopPlaceholder": "Nhập tên cửa hàng của bạn",
-    "buttonText": "Tiếp tục đặt hàng",
+    "buttonText": "Check in",
     "requiredField": "Vui lòng điền vào trường này.",
     "errorTitle": "Lỗi xác thực",
     "errorEvent": "Vui lòng chọn một sự kiện.",
@@ -49,11 +49,10 @@
     "checkinErrorDesc": "Đã xảy ra lỗi khi check-in. Vui lòng thử lại."
   },
   "order": {
-    "title": "Sản phẩm có sẵn",
     "orderSummary": "Tóm tắt đơn hàng",
     "total": "Tổng số lượng",
     "emptyCart": "Giỏ hàng của bạn đang trống.",
-    "checkout": "Thanh toán",
+    "checkout": "Đặt hàng",
     "addToOrder": "Thêm vào giỏ",
     "searchPlaceholder": "Tìm kiếm sản phẩm...",
     "shopName": "Tên cửa hàng",

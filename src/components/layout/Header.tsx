@@ -22,8 +22,6 @@ interface NavLink {
 const NAV_LINKS: NavLink[] = [
   { href: '/', label: 'home' },
   { href: '/order', label: 'order' },
-  { href: '/leaderboard', label: 'leaderboard' },
-  { href: '/leaderboard2', label: 'leaderboard2' },
 ] as const;
 
 // Memoized sub-components for performance

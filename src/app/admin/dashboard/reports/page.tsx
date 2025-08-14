@@ -30,12 +30,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Download, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, X } from 'lucide-react';
 import { getEvents, getCheckIns, getOrders, getCustomers } from '@/lib/data/actions';
 import type { Event, CheckIn, Order, Customer } from '@/lib/data/types';
 
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE_OPTIONS = [10, 20, 50, 100];
+const DEFAULT_CHECKIN_ITEMS_PER_PAGE = 20;
+const DEFAULT_ORDERS_PER_PAGE = 10;
 
 export default function ReportsPage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -45,9 +48,13 @@ export default function ReportsPage() {
   const [selectedEvent, setSelectedEvent] = useState('');
   const [checkInCurrentPage, setCheckInCurrentPage] = useState(1);
   const [ordersCurrentPage, setOrdersCurrentPage] = useState(1);
+  const [checkInItemsPerPage, setCheckInItemsPerPage] = useState(DEFAULT_CHECKIN_ITEMS_PER_PAGE);
+  const [ordersItemsPerPage, setOrdersItemsPerPage] = useState(DEFAULT_ORDERS_PER_PAGE);
+  const [checkInSearchTerm, setCheckInSearchTerm] = useState('');
+  const [ordersSearchTerm, setOrdersSearchTerm] = useState('');
 
   // Define orders per page (complete orders, not rows)
-  const ORDERS_PER_PAGE = 10;
+  const ORDERS_PER_PAGE = ordersItemsPerPage;
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -72,27 +79,79 @@ export default function ReportsPage() {
     fetchInitialData();
   }, []);
 
-  const filteredCheckins = checkIns.filter(c => c.eventId === selectedEvent);
-  const filteredOrders = orders.filter(o => o.eventId === selectedEvent);
+  const shopPhoneMap = new Map<string, string>();
+  customers.forEach(customer => {
+      if (!shopPhoneMap.has(customer.shopName)) {
+          shopPhoneMap.set(customer.shopName, customer.phone);
+      }
+  });
 
-  const totalCheckInPages = Math.ceil(filteredCheckins.length / ITEMS_PER_PAGE);
+  const filteredCheckins = checkIns
+    .filter(c => c.eventId === selectedEvent)
+    .filter(c => {
+      if (!checkInSearchTerm) return true;
+      const searchLower = checkInSearchTerm.toLowerCase();
+      return (
+        c.shopName.toLowerCase().includes(searchLower) ||
+        c.phone.toLowerCase().includes(searchLower)
+      );
+    });
+  
+  const filteredOrders = orders
+    .filter(o => o.eventId === selectedEvent)
+    .filter(o => {
+      if (!ordersSearchTerm) return true;
+      const searchLower = ordersSearchTerm.toLowerCase();
+      const phone = shopPhoneMap.get(o.shopName) || '';
+      return (
+        o.shopName.toLowerCase().includes(searchLower) ||
+        phone.toLowerCase().includes(searchLower)
+      );
+    });
+
+  const totalCheckInPages = Math.ceil(filteredCheckins.length / checkInItemsPerPage);
   const paginatedCheckins = filteredCheckins.slice(
-    (checkInCurrentPage - 1) * ITEMS_PER_PAGE,
-    checkInCurrentPage * ITEMS_PER_PAGE
+    (checkInCurrentPage - 1) * checkInItemsPerPage,
+    checkInCurrentPage * checkInItemsPerPage
   );
 
   const handleEventChange = (eventId: string) => {
     setSelectedEvent(eventId);
     setCheckInCurrentPage(1);
     setOrdersCurrentPage(1);
+    setCheckInSearchTerm('');
+    setOrdersSearchTerm('');
   }
 
-  const shopPhoneMap = new Map<string, string>();
-    customers.forEach(customer => {
-        if (!shopPhoneMap.has(customer.shopName)) {
-            shopPhoneMap.set(customer.shopName, customer.phone);
-        }
-    });
+  const handleCheckInItemsPerPageChange = (itemsPerPage: string) => {
+    setCheckInItemsPerPage(parseInt(itemsPerPage));
+    setCheckInCurrentPage(1);
+  }
+
+  const handleOrdersItemsPerPageChange = (itemsPerPage: string) => {
+    setOrdersItemsPerPage(parseInt(itemsPerPage));
+    setOrdersCurrentPage(1);
+  }
+
+  const handleCheckInSearch = (searchTerm: string) => {
+    setCheckInSearchTerm(searchTerm);
+    setCheckInCurrentPage(1);
+  }
+
+  const handleOrdersSearch = (searchTerm: string) => {
+    setOrdersSearchTerm(searchTerm);
+    setOrdersCurrentPage(1);
+  }
+
+  const clearCheckInSearch = () => {
+    setCheckInSearchTerm('');
+    setCheckInCurrentPage(1);
+  }
+
+  const clearOrdersSearch = () => {
+    setOrdersSearchTerm('');
+    setOrdersCurrentPage(1);
+  }
 
   // Pagination for orders: paginate by complete orders, not individual rows
   const totalOrdersPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
@@ -199,6 +258,32 @@ export default function ReportsPage() {
             <CardHeader>
                 <CardTitle>Check-in Report</CardTitle>
                 <CardDescription>Shop check-in data for the selected event.</CardDescription>
+                <div className="flex items-center gap-4 mt-4">
+                    <div className="relative flex-1 max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search by shop name or phone..."
+                            value={checkInSearchTerm}
+                            onChange={(e) => handleCheckInSearch(e.target.value)}
+                            className="pl-10 pr-10"
+                        />
+                        {checkInSearchTerm && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={clearCheckInSearch}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        )}
+                    </div>
+                    {checkInSearchTerm && (
+                        <div className="text-sm text-muted-foreground">
+                            {filteredCheckins.length} result{filteredCheckins.length !== 1 ? 's' : ''} found
+                        </div>
+                    )}
+                </div>
             </CardHeader>
             <CardContent>
                 <Table>
@@ -228,29 +313,77 @@ export default function ReportsPage() {
                     </TableBody>
                 </Table>
             </CardContent>
-            {totalCheckInPages > 1 && (
-                <CardFooter className="flex justify-center items-center space-x-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setCheckInCurrentPage((prev) => Math.max(prev - 1, 1))}
-                        disabled={checkInCurrentPage === 1}
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                        Previous
-                    </Button>
-                    <span>
-                        Page {checkInCurrentPage} of {totalCheckInPages}
-                    </span>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setCheckInCurrentPage((prev) => Math.min(prev + 1, totalCheckInPages))}
-                        disabled={checkInCurrentPage === totalCheckInPages}
-                    >
-                        Next
-                        <ChevronRight className="h-4 w-4" />
-                    </Button>
+            {filteredCheckins.length > 0 && (
+                <CardFooter className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                        <span className="text-sm text-muted-foreground">Items per page:</span>
+                        <Select value={checkInItemsPerPage.toString()} onValueChange={handleCheckInItemsPerPageChange}>
+                            <SelectTrigger className="w-[70px]">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {ITEMS_PER_PAGE_OPTIONS.map(option => (
+                                    <SelectItem key={option} value={option.toString()}>{option}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    {totalCheckInPages > 1 && (
+                        <div className="flex items-center space-x-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCheckInCurrentPage(1)}
+                                disabled={checkInCurrentPage === 1}
+                            >
+                                <ChevronsLeft className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCheckInCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                disabled={checkInCurrentPage === 1}
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <div className="flex items-center space-x-2">
+                                <span className="text-sm">Page</span>
+                                <Input
+                                    type="number"
+                                    min="1"
+                                    max={totalCheckInPages}
+                                    value={checkInCurrentPage}
+                                    onChange={(e) => {
+                                        const page = parseInt(e.target.value);
+                                        if (page >= 1 && page <= totalCheckInPages) {
+                                            setCheckInCurrentPage(page);
+                                        }
+                                    }}
+                                    className="w-16 text-center"
+                                />
+                                <span className="text-sm">of {totalCheckInPages}</span>
+                            </div>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCheckInCurrentPage((prev) => Math.min(prev + 1, totalCheckInPages))}
+                                disabled={checkInCurrentPage === totalCheckInPages}
+                            >
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCheckInCurrentPage(totalCheckInPages)}
+                                disabled={checkInCurrentPage === totalCheckInPages}
+                            >
+                                <ChevronsRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    )}
+                    <div className="text-sm text-muted-foreground">
+                        Showing {((checkInCurrentPage - 1) * checkInItemsPerPage) + 1} to {Math.min(checkInCurrentPage * checkInItemsPerPage, filteredCheckins.length)} of {filteredCheckins.length} entries
+                    </div>
                 </CardFooter>
             )}
         </Card>
@@ -259,6 +392,32 @@ export default function ReportsPage() {
             <CardHeader>
                 <CardTitle>Sale Orders Report</CardTitle>
                 <CardDescription>Detailed sales data for the selected event.</CardDescription>
+                <div className="flex items-center gap-4 mt-4">
+                    <div className="relative flex-1 max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search by shop name or phone..."
+                            value={ordersSearchTerm}
+                            onChange={(e) => handleOrdersSearch(e.target.value)}
+                            className="pl-10 pr-10"
+                        />
+                        {ordersSearchTerm && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={clearOrdersSearch}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        )}
+                    </div>
+                    {ordersSearchTerm && (
+                        <div className="text-sm text-muted-foreground">
+                            {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''} found
+                        </div>
+                    )}
+                </div>
             </CardHeader>
             <CardContent>
                 <Table>
@@ -300,29 +459,77 @@ export default function ReportsPage() {
                     </TableBody>
                 </Table>
             </CardContent>
-             {totalOrdersPages > 1 && (
-                <CardFooter className="flex justify-center items-center space-x-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setOrdersCurrentPage((prev) => Math.max(prev - 1, 1))}
-                        disabled={ordersCurrentPage === 1}
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                        Previous
-                    </Button>
-                    <span>
-                        Page {ordersCurrentPage} of {totalOrdersPages} ({filteredOrders.length} orders total, showing {paginatedFilteredOrders.length})
-                    </span>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setOrdersCurrentPage((prev) => Math.min(prev + 1, totalOrdersPages))}
-                        disabled={ordersCurrentPage === totalOrdersPages}
-                    >
-                        Next
-                        <ChevronRight className="h-4 w-4" />
-                    </Button>
+             {filteredOrders.length > 0 && (
+                <CardFooter className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                        <span className="text-sm text-muted-foreground">Orders per page:</span>
+                        <Select value={ordersItemsPerPage.toString()} onValueChange={handleOrdersItemsPerPageChange}>
+                            <SelectTrigger className="w-[70px]">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {ITEMS_PER_PAGE_OPTIONS.map(option => (
+                                    <SelectItem key={option} value={option.toString()}>{option}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    {totalOrdersPages > 1 && (
+                        <div className="flex items-center space-x-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setOrdersCurrentPage(1)}
+                                disabled={ordersCurrentPage === 1}
+                            >
+                                <ChevronsLeft className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setOrdersCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                disabled={ordersCurrentPage === 1}
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <div className="flex items-center space-x-2">
+                                <span className="text-sm">Page</span>
+                                <Input
+                                    type="number"
+                                    min="1"
+                                    max={totalOrdersPages}
+                                    value={ordersCurrentPage}
+                                    onChange={(e) => {
+                                        const page = parseInt(e.target.value);
+                                        if (page >= 1 && page <= totalOrdersPages) {
+                                            setOrdersCurrentPage(page);
+                                        }
+                                    }}
+                                    className="w-16 text-center"
+                                />
+                                <span className="text-sm">of {totalOrdersPages}</span>
+                            </div>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setOrdersCurrentPage((prev) => Math.min(prev + 1, totalOrdersPages))}
+                                disabled={ordersCurrentPage === totalOrdersPages}
+                            >
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setOrdersCurrentPage(totalOrdersPages)}
+                                disabled={ordersCurrentPage === totalOrdersPages}
+                            >
+                                <ChevronsRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    )}
+                    <div className="text-sm text-muted-foreground">
+                        Showing {((ordersCurrentPage - 1) * ordersItemsPerPage) + 1} to {Math.min(ordersCurrentPage * ordersItemsPerPage, filteredOrders.length)} of {filteredOrders.length} orders
+                    </div>
                 </CardFooter>
             )}
         </Card>
