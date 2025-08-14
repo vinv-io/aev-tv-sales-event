@@ -1,87 +1,63 @@
-# 1. Dependencies stage
-FROM node:23-alpine AS deps
+# Optimized Dockerfile for Next.js with standalone output
+FROM node:23-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
 RUN npm ci --frozen-lockfile
 
-# 2. Builder stage
-FROM node:23-alpine AS builder
+# Rebuild the source code only when needed
+FROM base AS builder
 WORKDIR /app
-
-# Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
-
-# Copy source code
 COPY . .
-
-# Copy environment file
-COPY .env .env
 
 # Generate Prisma client
 RUN npx prisma generate
 
-# Debug: Show environment and setup
-RUN echo "Node version: $(node --version)" && echo "NPM version: $(npm --version)"
+# Disable Next.js telemetry
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Build the application using environment variables
+# Build application
 RUN npm run build
 
-# Debug: List .next directory contents
-RUN ls -la /app/.next/ || echo ".next directory not found"
-
-# Ensure .next directory exists and create missing files if needed
-RUN mkdir -p /app/.next
-RUN [ ! -f /app/.next/prerender-manifest.json ] && echo '{"version":4,"routes":{},"dynamicRoutes":{},"notFoundRoutes":[],"preview":{"previewModeId":"development","previewModeSigningKey":"development","previewModeEncryptionKey":"development"}}' > /app/.next/prerender-manifest.json || true
-RUN [ ! -f /app/.next/routes-manifest.json ] && echo '{"version":3,"pages404":true,"basePath":"","redirects":[],"rewrites":[],"headers":[],"staticRoutes":[],"dynamicRoutes":[],"fallbackRoutes":[]}' > /app/.next/routes-manifest.json || true
-
-# Debug: Verify files were created
-RUN ls -la /app/.next/prerender-manifest.json /app/.next/routes-manifest.json || echo "Manifest files missing"
-
-# Ensure proper permissions for node_modules
-RUN chown -R 1001:1001 /app/node_modules
-
-# 3. Runner stage
-FROM node:23-alpine AS runner
+# Production image, copy all the files and run next
+FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Install sharp for image optimization
+# Install sharp for image optimization in Alpine
 RUN npm install sharp
 
-# Copy the built application and all dependencies
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-# Copy Prisma files for database operations
+# Copy Prisma schema and generated client
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
-# Copy environment file
-COPY --from=builder --chown=nextjs:nodejs /app/.env ./.env
-
-# Create cache directory with proper permissions
-RUN mkdir -p /app/.next/cache && chown -R nextjs:nodejs /app/.next/cache
-RUN chown -R nextjs:nodejs /app/node_modules
-RUN chown -R nextjs:nodejs /app/.next
-RUN chown -R nextjs:nodejs /app/public
+# Copy environment variables
+COPY --from=builder --chown=nextjs:nodejs /app/.env .env
 
 USER nextjs
 
 EXPOSE 3000
+
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Start Next.js server
-CMD ["npx", "next", "start"]
+# server.js is created by next build from the standalone output
+# https://nextjs.org/docs/pages/api-reference/next-config-js/output
+CMD ["node", "server.js"]
 
