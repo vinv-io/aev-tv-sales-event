@@ -46,7 +46,7 @@ export default function LeaderboardPage() {
     useEffect(() => {
         const fetchData = async () => {
             const [leaderboard, prods, events] = await Promise.all([
-                getLeaderboard(100) as Promise<LeaderboardEntry[]>,
+                getLeaderboard(10) as Promise<LeaderboardEntry[]>,
                 getProducts() as Promise<Product[]>,
                 getActiveEvents() as Promise<Event[]>
             ]);
@@ -130,6 +130,7 @@ export default function LeaderboardPage() {
 
     const rankedData = Object.values(groupedByShop)
         .sort((a, b) => b.totalQuantity - a.totalQuantity)
+        .slice(0, 10)
         .map((shop, index) => ({
             rank: index + 1,
             ...shop

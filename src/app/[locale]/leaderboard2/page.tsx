@@ -40,7 +40,7 @@ export default function LeaderboardPage2() {
         setIsClient(true);
         const fetchData = async () => {
             const [leaderboard, prods, events] = await Promise.all([
-                getLeaderboard(15) as Promise<LeaderboardEntry[]>,
+                getLeaderboard(10) as Promise<LeaderboardEntry[]>,
                 getProducts() as Promise<Product[]>,
                 getActiveEvents() as Promise<Event[]>
             ]);
