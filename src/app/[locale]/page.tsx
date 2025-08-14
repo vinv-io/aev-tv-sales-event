@@ -86,11 +86,28 @@ export default function CheckInPage({ params }: Props) {
     const fetchEvents = async () => {
       try {
         const fetchedEvents = await getActiveEvents() as Event[];
-        const sorted = fetchedEvents
+        
+        let eventsToUse = fetchedEvents;
+        
+        // If no active events found, try to get all events as fallback
+        if (fetchedEvents.length === 0) {
+          try {
+            const { getEvents } = await import('@/lib/data/actions');
+            const allEvents = await getEvents() as Event[];
+            eventsToUse = allEvents;
+          } catch (fallbackError) {
+            console.error('Failed to fetch fallback events:', fallbackError);
+          }
+        }
+        
+        const sorted = eventsToUse
           .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
-        setEvents(fetchedEvents);
+        
+        setEvents(eventsToUse);
         setActiveAndSortedEvents(sorted);
-        if (sorted.length > 0) {
+        
+        // Always set the first event as default if events are available
+        if (sorted.length > 0 && !event) {
           setEvent(sorted[0].id);
         }
       } catch (error) {
@@ -98,7 +115,14 @@ export default function CheckInPage({ params }: Props) {
       }
     };
     fetchEvents();
-  }, []);
+  }, [event]); // Include event in dependency array
+
+  // Ensure an event is selected when events are available but no event is selected
+  useEffect(() => {
+    if (activeAndSortedEvents.length > 0 && !event) {
+      setEvent(activeAndSortedEvents[0].id);
+    }
+  }, [activeAndSortedEvents, event]);
 
   // Check for existing customer when phone changes
   useEffect(() => {
@@ -214,9 +238,20 @@ export default function CheckInPage({ params }: Props) {
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="event">{currentContent.eventLabel}</Label>
-                <Select name="event" value={event} onValueChange={setEvent}>
+                <Select 
+                  name="event" 
+                  value={event || undefined} 
+                  onValueChange={setEvent} 
+                  defaultValue={activeAndSortedEvents.length > 0 ? activeAndSortedEvents[0].id : undefined}
+                  required
+                  disabled={activeAndSortedEvents.length === 0}
+                >
                   <SelectTrigger id="event">
-                    <SelectValue placeholder={currentContent.eventPlaceholder} />
+                    <SelectValue placeholder={
+                      activeAndSortedEvents.length === 0 
+                        ? (locale === 'vi' ? 'Không có sự kiện nào' : 'No events available')
+                        : currentContent.eventPlaceholder
+                    } />
                   </SelectTrigger>
                   <SelectContent>
                     {activeAndSortedEvents.map(event => {
@@ -225,6 +260,11 @@ export default function CheckInPage({ params }: Props) {
                     })}
                   </SelectContent>
                 </Select>
+                {activeAndSortedEvents.length === 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    {locale === 'vi' ? 'Hiện tại không có sự kiện nào đang diễn ra' : 'Currently no events are active'}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="phone">{currentContent.phoneLabel}</Label>
@@ -236,7 +276,13 @@ export default function CheckInPage({ params }: Props) {
                   onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ""))}
                   maxLength={10}
                   title={currentContent.phoneTitle}
+                  disabled={activeAndSortedEvents.length === 0}
                 />
+                {activeAndSortedEvents.length === 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    {locale === 'vi' ? 'Không có sự kiện nào đang hoạt động' : 'No active events available'}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="shop-name">{currentContent.shopLabel}</Label>
@@ -245,14 +291,28 @@ export default function CheckInPage({ params }: Props) {
                   value={shopName}
                   onChange={(e) => setShopName(e.target.value)}
                   placeholder={currentContent.shopPlaceholder} 
-                  disabled={!!existingCustomer}
+                  disabled={!!existingCustomer || activeAndSortedEvents.length === 0}
                 />
+                {activeAndSortedEvents.length === 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    {locale === 'vi' ? 'Vui lòng chờ sự kiện được kích hoạt' : 'Please wait for an event to be activated'}
+                  </p>
+                )}
               </div>
             </div>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Processing...' : currentContent.buttonText}
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isSubmitting || activeAndSortedEvents.length === 0}
+            >
+              {isSubmitting 
+                ? 'Processing...' 
+                : activeAndSortedEvents.length === 0 
+                  ? (locale === 'vi' ? 'Không có sự kiện' : 'No Events Available')
+                  : currentContent.buttonText
+              }
             </Button>
           </CardFooter>
         </form>

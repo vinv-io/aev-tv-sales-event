@@ -57,14 +57,16 @@ export class CreateCheckInUseCase {
     const checkInTime = now.toTimeString().split(' ')[0];
     const id = `CHK${Date.now()}`;
 
-    // Business rule: Prevent duplicate check-ins on same day for same event
+    // Business rule: Allow re-entry for existing customers who want to place additional orders
     const existingCheckIns = await this.checkInRepository.findByCustomerId(request.customerId);
     const todayCheckInForEvent = existingCheckIns.find(checkIn => 
       checkIn.checkInDate === checkInDate && checkIn.eventId === request.eventId
     );
 
     if (todayCheckInForEvent) {
-      throw new BusinessRuleError('Customer has already checked in for this event today');
+      // Customer already checked in - return the existing check-in to allow re-entry for additional orders
+      console.log('✅ Customer already checked in for this event. Allowing re-entry for additional orders.');
+      return todayCheckInForEvent;
     }
 
     // Create domain entity

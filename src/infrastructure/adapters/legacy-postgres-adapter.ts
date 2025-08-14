@@ -3,7 +3,7 @@
 
 import { prisma } from '../database/prisma';
 import { format, isWithinInterval } from 'date-fns';
-import type { Customer, Event, Product, Order, CheckIn, LeaderboardEntry, Package } from './types';
+import type { Customer, Event, Product, Order, CheckIn, LeaderboardEntry, Package } from '../../lib/data/types';
 
 
 // Events
@@ -22,9 +22,26 @@ export const getEvents = async (): Promise<Event[]> => {
 export const getActiveEvents = async (): Promise<Event[]> => {
     const allEvents = await prisma.event.findMany();
     const now = new Date();
-    const active = allEvents.filter(event => 
-        event.status && isWithinInterval(now, { start: new Date(event.startDate), end: new Date(event.endDate) })
-    ).map((e: any) => ({
+    
+    const active = allEvents.filter(event => {
+        if (!event.status) {
+            return false;
+        }
+        
+        const startDate = new Date(event.startDate);
+        const endDate = new Date(event.endDate);
+        
+        // More lenient check: include events that haven't expired yet
+        // or events starting within 7 days
+        const sevenDaysFromNow = new Date(now);
+        sevenDaysFromNow.setDate(now.getDate() + 7);
+        
+        const isCurrentlyActive = isWithinInterval(now, { start: startDate, end: endDate });
+        const isUpcoming = startDate <= sevenDaysFromNow && endDate >= now;
+        const isValid = isCurrentlyActive || isUpcoming;
+        
+        return isValid;
+    }).map((e: any) => ({
         ...e,
         name: JSON.parse(e.name as string),
         description: e.description ? JSON.parse(e.description) : undefined,
@@ -32,6 +49,7 @@ export const getActiveEvents = async (): Promise<Event[]> => {
         endDate: format(new Date(e.endDate), 'dd-MM-yyyy'),
         image: e.image || undefined
     }));
+    
     return active;
 };
 
@@ -213,8 +231,9 @@ export const findCustomerByPhone = async (phone: string): Promise<Customer | und
 export const createCustomer = async (customerData: Omit<Customer, 'id' | 'joined'>): Promise<Customer> => {
     const newCustomer = {
         id: `CUST${Date.now()}`,
+        phone: customerData.phone,
+        shopName: customerData.shopName,
         joined: new Date(),
-        ...customerData,
     };
     const result = await prisma.customer.create({
         data: newCustomer
@@ -269,8 +288,10 @@ export const getOrders = async (): Promise<Order[]> => {
 export const createOrder = async (orderData: Omit<Order, 'orderId' | 'orderDate'>): Promise<Order> => {
     const newOrder = {
         orderId: `ORD${Date.now()}`,
+        shopName: orderData.shopName,
+        eventId: orderData.eventId,
+        total: orderData.total,
         orderDate: new Date(),
-        ...orderData,
         products: JSON.stringify(orderData.products),
     };
     const result = await prisma.order.create({
@@ -294,6 +315,21 @@ export const getCheckIns = async (): Promise<CheckIn[]> => {
 
 export const createCheckIn = async (checkInData: { customerId: string, shopName: string, phone: string, eventId: string }): Promise<void> => {
     try {
+        // First check if customer already has a check-in for this event
+        const existingCheckIn = await prisma.checkIn.findFirst({
+            where: {
+                customerId: checkInData.customerId,
+                eventId: checkInData.eventId,
+            }
+        });
+
+        if (existingCheckIn) {
+            // Customer already checked in for this event - allow them to proceed without creating duplicate
+            console.log('✅ Customer already checked in for this event. Allowing re-entry for additional orders.');
+            return; // Don't create duplicate, just allow them to proceed
+        }
+
+        // Create new check-in record
         await prisma.checkIn.create({
             data: {
                 customerId: checkInData.customerId,
@@ -308,8 +344,9 @@ export const createCheckIn = async (checkInData: { customerId: string, shopName:
         
         // Handle specific Prisma errors
         if (error.code === 'P2002') {
-            // Unique constraint violation - customer already checked in for this event
-            throw new Error('Bạn đã check-in cho sự kiện này rồi. Mỗi khách hàng chỉ có thể check-in một lần cho mỗi sự kiện.');
+            // Unique constraint violation - this should now be handled above, but just in case
+            console.log('ℹ️ Customer already checked in for this event. Allowing re-entry for additional orders.');
+            return; // Allow them to proceed without error
         }
         
         if (error.code === 'P2003') {
@@ -339,7 +376,7 @@ export const getLeaderboardData = async (count: number): Promise<LeaderboardEntr
         }
         const products = JSON.parse(order.products as string);
         products.forEach((p: any) => {
-            const existingProduct = aggregated[key].products.find(prod => prod.id === p.id);
+            const existingProduct = aggregated[key].products.find((prod: any) => prod.id === p.id);
             if (existingProduct) {
                 existingProduct.quantity += p.quantity;
             } else {
@@ -350,8 +387,8 @@ export const getLeaderboardData = async (count: number): Promise<LeaderboardEntr
     
     const sorted = Object.values(aggregated)
     .sort((a,b) => {
-        const totalA = a.products.reduce((sum, p) => sum + p.quantity, 0);
-        const totalB = b.products.reduce((sum, p) => sum + p.quantity, 0);
+        const totalA = a.products.reduce((sum: number, p: any) => sum + p.quantity, 0);
+        const totalB = b.products.reduce((sum: number, p: any) => sum + p.quantity, 0);
         return totalB - totalA;
     })
     .slice(0, count);
