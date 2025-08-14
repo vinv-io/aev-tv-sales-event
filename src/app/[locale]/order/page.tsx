@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Minus, Plus, ShoppingCart, Trash2, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { Minus, Plus, ShoppingCart, Trash2, ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 import { useLayoutContext } from '../layout.client';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
@@ -28,6 +28,7 @@ export default function OrderPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   const content = {
     vi: {
@@ -49,6 +50,7 @@ export default function OrderPage() {
       addToCartError: 'Không thể thêm sản phẩm vào giỏ hàng.',
       noProductsFound: 'Không tìm thấy sản phẩm nào phù hợp với tìm kiếm của bạn.',
       noProductsAvailable: 'Không có sản phẩm nào khả dụng.',
+      promotionAlt: 'AEV TV - Khuyến mãi sản phẩm TV',
     },
     en: {
       orderSummary: 'Order Summary',
@@ -69,6 +71,7 @@ export default function OrderPage() {
       addToCartError: 'Unable to add product to cart.',
       noProductsFound: 'No products found matching your search.',
       noProductsAvailable: 'No products available.',
+      promotionAlt: 'AEV TV - Product TV Promotion',
     },
   };
 
@@ -95,6 +98,27 @@ export default function OrderPage() {
         fetchProducts();
     }
   }, [toast, currentContent.errorTitle, currentContent.loadProductsError, customerInfo.phone, customerInfo.shopName]);
+
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isImageModalOpen) {
+        setIsImageModalOpen(false);
+      }
+    };
+
+    if (isImageModalOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isImageModalOpen]);
 
   // Early return if user is not authenticated
   if (!customerInfo.phone || !customerInfo.shopName) {
@@ -179,6 +203,21 @@ export default function OrderPage() {
 
   return (
     <div className="container mx-auto p-4">
+      {/* Promotional Banner */}
+      <Card className="mb-6 overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] duration-300" onClick={() => setIsImageModalOpen(true)}>
+        <div className="relative w-full h-40 sm:h-48 md:h-56 lg:h-64 xl:h-72">
+          <Image
+            src="/images/aev_tv_kv.jpg"
+            alt={currentContent.promotionAlt}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 66vw, 60vw"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/10"></div>
+        </div>
+      </Card>
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <Card className="mb-6">
@@ -302,6 +341,20 @@ export default function OrderPage() {
            )}
         </div>
         <div className="lg:col-span-1">
+          {/* Sidebar Promotional Image */}
+          <Card className="mb-6 overflow-hidden cursor-pointer transition-transform hover:scale-105 duration-300" onClick={() => setIsImageModalOpen(true)}>
+            <div className="relative w-full h-24 sm:h-32 md:h-40 lg:h-48 xl:h-52">
+              <Image
+                src="/images/aev_tv_kv.jpg"
+                alt={currentContent.promotionAlt}
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-black/10"></div>
+            </div>
+          </Card>
+          
           <Card className="sticky top-24 shadow-lg">
             <CardHeader>
               <CardTitle className="text-2xl font-headline">{currentContent.orderSummary}</CardTitle>
@@ -342,6 +395,37 @@ export default function OrderPage() {
           </Card>
         </div>
       </div>
+
+      {/* Image Modal */}
+      {isImageModalOpen && (
+        <div className="fixed inset-0 bg-black/90 z-50 overflow-auto" onClick={() => setIsImageModalOpen(false)}>
+          <div className="relative min-h-screen flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8">
+            <Button
+              variant="outline"
+              size="icon"
+              className="fixed top-2 right-2 sm:top-4 sm:right-4 bg-white/90 hover:bg-white z-10"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsImageModalOpen(false);
+              }}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+            <div className="relative w-full h-full max-w-[95vw] max-h-[90vh] flex items-center justify-center">
+              <Image
+                src="/images/aev_tv_kv.jpg"
+                alt={currentContent.promotionAlt}
+                width={0}
+                height={0}
+                className="w-auto h-auto max-w-full max-h-full object-contain"
+                sizes="(max-width: 640px) 95vw, (max-width: 1024px) 90vw, (max-width: 1920px) 85vw, 1920px"
+                style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '100%' }}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
