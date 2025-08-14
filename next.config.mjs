@@ -13,6 +13,11 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Disable features that might cause manifest issues in Docker
+  swcMinify: false,
+  generateBuildId: async () => {
+    return 'build-' + Date.now()
+  },
   async headers() {
     return [
       {

@@ -22,11 +22,22 @@ COPY .env .env
 # Generate Prisma client
 RUN npx prisma generate
 
+# Debug: Show environment and setup
+RUN echo "Node version: $(node --version)" && echo "NPM version: $(npm --version)"
+
 # Build the application using environment variables
 RUN npm run build
 
-# Create missing prerender manifest if it doesn't exist
+# Debug: List .next directory contents
+RUN ls -la /app/.next/ || echo ".next directory not found"
+
+# Ensure .next directory exists and create missing files if needed
+RUN mkdir -p /app/.next
 RUN [ ! -f /app/.next/prerender-manifest.json ] && echo '{"version":4,"routes":{},"dynamicRoutes":{},"notFoundRoutes":[],"preview":{"previewModeId":"development","previewModeSigningKey":"development","previewModeEncryptionKey":"development"}}' > /app/.next/prerender-manifest.json || true
+RUN [ ! -f /app/.next/routes-manifest.json ] && echo '{"version":3,"pages404":true,"basePath":"","redirects":[],"rewrites":[],"headers":[],"staticRoutes":[],"dynamicRoutes":[],"fallbackRoutes":[]}' > /app/.next/routes-manifest.json || true
+
+# Debug: Verify files were created
+RUN ls -la /app/.next/prerender-manifest.json /app/.next/routes-manifest.json || echo "Manifest files missing"
 
 # Ensure proper permissions for node_modules
 RUN chown -R 1001:1001 /app/node_modules
