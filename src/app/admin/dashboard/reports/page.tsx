@@ -32,8 +32,8 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Download, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, X } from 'lucide-react';
-import { getEvents, getCheckIns, getOrders, getCustomers } from '@/lib/data/actions';
-import type { Event, CheckIn, Order, Customer } from '@/lib/data/types';
+import { getEvents, getCheckIns, getOrders, getCustomers, getProducts } from '@/lib/data/actions';
+import type { Event, CheckIn, Order, Customer, Product } from '@/lib/data/types';
 
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 50, 100];
@@ -45,6 +45,7 @@ export default function ReportsPage() {
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [selectedEvent, setSelectedEvent] = useState('');
   const [checkInCurrentPage, setCheckInCurrentPage] = useState(1);
   const [ordersCurrentPage, setOrdersCurrentPage] = useState(1);
@@ -58,11 +59,12 @@ export default function ReportsPage() {
 
   useEffect(() => {
     const fetchInitialData = async () => {
-        const [allEvents, allCustomers, checkinData, orderData] = await Promise.all([
+        const [allEvents, allCustomers, checkinData, orderData, productData] = await Promise.all([
             getEvents() as Promise<Event[]>,
             getCustomers() as Promise<Customer[]>,
             getCheckIns() as Promise<CheckIn[]>,
-            getOrders() as Promise<Order[]>
+            getOrders() as Promise<Order[]>,
+            getProducts() as Promise<Product[]>
         ]);
         
         const sortedEvents = [...allEvents].sort((a,b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
@@ -71,6 +73,7 @@ export default function ReportsPage() {
         setCustomers(allCustomers);
         setCheckIns(checkinData);
         setOrders(orderData);
+        setProducts(productData);
 
         if (sortedEvents.length > 0) {
             setSelectedEvent(sortedEvents[0].id);
@@ -85,6 +88,19 @@ export default function ReportsPage() {
           shopPhoneMap.set(customer.shopName, customer.phone);
       }
   });
+
+  // Helper function to get product name by ID
+  const getProductName = (productId: string): string => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return productId; // Fallback to ID if product not found
+    
+    // Handle both string and LocalizedString types
+    if (typeof product.name === 'string') {
+      return product.name;
+    } else {
+      return product.name.vi || product.name.en || productId; // Prefer Vietnamese, fallback to English, then ID
+    }
+  };
 
   const filteredCheckins = checkIns
     .filter(c => c.eventId === selectedEvent)
@@ -168,6 +184,7 @@ export default function ReportsPage() {
       shopName: order.shopName,
       phone: shopPhoneMap.get(order.shopName) || 'N/A',
       productId: product.id,
+      productName: getProductName(product.id),
       quantity: product.quantity,
       totalQuantity: totalQuantity,
       orderDate: order.orderDate,
@@ -196,6 +213,7 @@ export default function ReportsPage() {
             'Shop Name': order.shopName,
             'Phone Number': shopPhoneMap.get(order.shopName) || '',
             'Product ID': product.id,
+            'Product Name': getProductName(product.id),
             'Quantity': product.quantity,
             'Order Date': order.orderDate,
         }))
@@ -426,7 +444,7 @@ export default function ReportsPage() {
                             <TableHead>Order ID</TableHead>
                             <TableHead>Shop Name</TableHead>
                             <TableHead>Phone Number</TableHead>
-                            <TableHead>Product ID</TableHead>
+                            <TableHead>Product Name</TableHead>
                             <TableHead>Product Quantity</TableHead>
                             <TableHead>Total Quantity</TableHead>
                             <TableHead>Order Date</TableHead>
@@ -442,7 +460,7 @@ export default function ReportsPage() {
                                        <TableCell rowSpan={orderItem.totalProducts}>{orderItem.phone}</TableCell>
                                    </>
                                ) : null}
-                               <TableCell>{orderItem.productId}</TableCell>
+                               <TableCell>{orderItem.productName}</TableCell>
                                <TableCell>{orderItem.quantity}</TableCell>
                                {orderItem.isFirstProduct ? (
                                    <>

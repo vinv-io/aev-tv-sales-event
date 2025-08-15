@@ -3,6 +3,7 @@
 // Disable static generation for this client-side page
 export const dynamic = 'force-dynamic'
 
+import { useEffect, useState } from "react"
 import {
   Card,
   CardContent,
@@ -30,23 +31,6 @@ import {
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { Pie, PieChart } from "recharts"
 
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-]
-
-const pieChartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
-]
-
 const pieChartConfig = {
   visitors: {
     label: "Visitors",
@@ -73,39 +57,108 @@ const pieChartConfig = {
   },
 }
 
+// Dashboard stats interface
+interface DashboardStats {
+  totalSales: number;
+  dailySales: number;
+  totalVisits: number;
+  dailyVisits: number;
+  totalOrders: number;
+  conversionRate: number;
+  operationalEffect: number;
+}
+
+interface LeaderboardEntry {
+  rank: number;
+  shopName: string;
+  sales: number;
+}
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [statsRes, leaderboardRes, categoriesRes, chartRes] = await Promise.all([
+          fetch('/api/dashboard/stats'),
+          fetch('/api/dashboard/leaderboard'),
+          fetch('/api/dashboard/categories'),
+          fetch('/api/dashboard/sales-chart')
+        ]);
+
+        const [statsData, leaderboardData, categoriesData, chartData] = await Promise.all([
+          statsRes.json(),
+          leaderboardRes.json(),
+          categoriesRes.json(),
+          chartRes.json()
+        ]);
+
+        setStats(statsData);
+        setLeaderboard(leaderboardData);
+        setCategoryData(categoriesData);
+        setChartData(chartData);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  // Format currency for Vietnamese Dong
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-lg">Loading dashboard data...</div>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-normal text-muted-foreground">Total Sales</CardTitle>
-            <div className="text-3xl font-bold">₫1,234,567,890</div>
+            <div className="text-3xl font-bold">{formatCurrency(stats?.totalSales || 0)}</div>
           </CardHeader>
           <CardContent className="h-24">
             {/* Trend chart can be added here */}
           </CardContent>
           <CardFooter className="border-t pt-4">
-            <p className="text-sm text-muted-foreground">Daily Sales: ₫12,423</p>
+            <p className="text-sm text-muted-foreground">Daily Sales: {formatCurrency(stats?.dailySales || 0)}</p>
           </CardFooter>
         </Card>
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-normal text-muted-foreground">Visits</CardTitle>
-            <div className="text-3xl font-bold">8,846</div>
+            <div className="text-3xl font-bold">{stats?.totalVisits?.toLocaleString() || 0}</div>
           </CardHeader>
           <CardContent className="h-24">
              {/* Trend chart can be added here */}
           </CardContent>
           <CardFooter className="border-t pt-4">
-            <p className="text-sm text-muted-foreground">Daily Visits: 1,234</p>
+            <p className="text-sm text-muted-foreground">Daily Visits: {stats?.dailyVisits?.toLocaleString() || 0}</p>
           </CardFooter>
         </Card>
         <Card>
             <CardHeader>
                 <CardTitle className="text-sm font-normal text-muted-foreground">Payments</CardTitle>
-                <div className="text-3xl font-bold">6,560</div>
+                <div className="text-3xl font-bold">{stats?.totalOrders?.toLocaleString() || 0}</div>
             </CardHeader>
             <CardContent className="h-24 p-0">
                 <ChartContainer config={{
@@ -135,16 +188,16 @@ export default function DashboardPage() {
                 </ChartContainer>
             </CardContent>
             <CardFooter className="border-t pt-4">
-                <p className="text-sm text-muted-foreground">Conversion Rate: 60%</p>
+                <p className="text-sm text-muted-foreground">Conversion Rate: {stats?.conversionRate || 0}%</p>
             </CardFooter>
         </Card>
         <Card>
             <CardHeader>
                 <CardTitle className="text-sm font-normal text-muted-foreground">Operational Effect</CardTitle>
-                <div className="text-3xl font-bold">78%</div>
+                <div className="text-3xl font-bold">{stats?.operationalEffect || 0}%</div>
             </CardHeader>
             <CardContent className="h-24 flex items-center">
-                 <Progress value={78} />
+                 <Progress value={stats?.operationalEffect || 0} />
             </CardContent>
             <CardFooter className="border-t pt-4">
                 <p className="text-sm text-muted-foreground flex items-center gap-2">
@@ -185,17 +238,24 @@ export default function DashboardPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {[...Array(7)].map((_, i) => (
-                                <TableRow key={i}>
+                            {leaderboard.map((entry) => (
+                                <TableRow key={entry.shopName}>
                                     <TableCell>
-                                        <span className={`w-6 h-6 flex items-center justify-center rounded-full ${i < 3 ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                                            {i + 1}
+                                        <span className={`w-6 h-6 flex items-center justify-center rounded-full ${entry.rank <= 3 ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                                            {entry.rank}
                                         </span>
                                     </TableCell>
-                                    <TableCell>Shop No. {i + 1}</TableCell>
-                                    <TableCell className="text-right">₫1,234,567</TableCell>
+                                    <TableCell>{entry.shopName}</TableCell>
+                                    <TableCell className="text-right">{formatCurrency(entry.sales)}</TableCell>
                                 </TableRow>
                             ))}
+                            {leaderboard.length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="text-center text-muted-foreground">
+                                        No data available
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -215,7 +275,7 @@ export default function DashboardPage() {
                         cursor={false}
                         content={<ChartTooltipContent hideLabel />}
                         />
-                        <Pie data={pieChartData} dataKey="visitors" nameKey="browser" />
+                        <Pie data={categoryData} dataKey="visitors" nameKey="browser" />
                     </PieChart>
                 </ChartContainer>
             </CardContent>
